@@ -1,0 +1,211 @@
+{
+  "name": "latex-change-reviewer",
+  "displayName": "%displayName%",
+  "description": "%description%",
+  "publisher": "local-latex-tools",
+  "version": "0.2.0",
+  "engines": {
+    "vscode": "^1.85.2"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/src/extension.js",
+  "activationEvents": [
+    "onLanguage:latex",
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "compile": "tsc -p .",
+    "test": "npm run compile && node --test dist/tests/parser.test.js dist/tests/navigation.test.js",
+    "package": "npm run compile && node scripts/package.cjs",
+    "test:integration": "npm run compile && node dist/tests/runIntegration.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "1.85.0",
+    "@vscode/test-electron": "^2.3.9",
+    "@vscode/vsce": "^2.24.0",
+    "typescript": "^5.3.3"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "latexReview.acceptCurrent",
+        "title": "%command.acceptCurrent%",
+        "enablement": "latexReview.enabled && latexReview.hasCurrent && latexReview.writable && !latexReview.busy && !editorReadonly"
+      },
+      {
+        "command": "latexReview.rejectCurrent",
+        "title": "%command.rejectCurrent%",
+        "enablement": "latexReview.enabled && latexReview.hasCurrent && latexReview.writable && !latexReview.busy && !editorReadonly"
+      },
+      {
+        "command": "latexReview.nextChange",
+        "title": "%command.nextChange%",
+        "enablement": "latexReview.enabled && latexReview.supported && !latexReview.busy"
+      },
+      {
+        "command": "latexReview.previousChange",
+        "title": "%command.previousChange%",
+        "enablement": "latexReview.enabled && latexReview.supported && !latexReview.busy"
+      },
+      {
+        "command": "latexReview.refresh",
+        "title": "%command.refresh%",
+        "enablement": "latexReview.enabled && latexReview.supported && !latexReview.busy"
+      },
+      {
+        "command": "latexReview.toggleReview",
+        "title": "%command.toggleReview%",
+        "icon": "$(checklist)",
+        "enablement": "latexReview.supported"
+      },
+      {
+        "command": "latexReview.locateCurrent",
+        "title": "%command.locateCurrent%",
+        "enablement": "latexReview.enabled && latexReview.supported && !latexReview.busy"
+      },
+      {
+        "command": "latexReview.selectLanguage",
+        "title": "%command.selectLanguage%"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "latexReview.acceptCurrent",
+          "when": "latexReview.supported && latexReview.enabled && latexReview.hasCurrent && latexReview.writable && !latexReview.busy"
+        },
+        {
+          "command": "latexReview.rejectCurrent",
+          "when": "latexReview.supported && latexReview.enabled && latexReview.hasCurrent && latexReview.writable && !latexReview.busy"
+        },
+        {
+          "command": "latexReview.nextChange",
+          "when": "latexReview.supported && latexReview.enabled && !latexReview.busy"
+        },
+        {
+          "command": "latexReview.previousChange",
+          "when": "latexReview.supported && latexReview.enabled && !latexReview.busy"
+        },
+        {
+          "command": "latexReview.refresh",
+          "when": "latexReview.supported && latexReview.enabled && !latexReview.busy"
+        },
+        {
+          "command": "latexReview.toggleReview",
+          "when": "latexReview.supported"
+        },
+        {
+          "command": "latexReview.selectLanguage"
+        },
+        {
+          "command": "latexReview.locateCurrent",
+          "when": "latexReview.supported && latexReview.enabled && !latexReview.busy"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "latexReview.acceptCurrent",
+          "when": "latexReview.supported && latexReview.enabled && latexReview.hasCurrent && latexReview.writable && !latexReview.busy && editorTextFocus",
+          "group": "navigation@10"
+        },
+        {
+          "command": "latexReview.rejectCurrent",
+          "when": "latexReview.supported && latexReview.enabled && latexReview.hasCurrent && latexReview.writable && !latexReview.busy && editorTextFocus",
+          "group": "navigation@11"
+        },
+        {
+          "command": "latexReview.previousChange",
+          "when": "latexReview.supported && latexReview.enabled && !latexReview.busy && editorTextFocus",
+          "group": "navigation@12"
+        },
+        {
+          "command": "latexReview.nextChange",
+          "when": "latexReview.supported && latexReview.enabled && !latexReview.busy && editorTextFocus",
+          "group": "navigation@13"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "latexReview.toggleReview",
+          "when": "latexReview.supported",
+          "group": "navigation@80"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "latexReview.acceptCurrent",
+        "key": "ctrl+k alt+a",
+        "when": "config.latexReview.enableDefaultKeybindings && latexReview.supported && latexReview.enabled && latexReview.hasCurrent && latexReview.writable && !latexReview.busy && editorTextFocus && !isComposing && !editorReadonly"
+      },
+      {
+        "command": "latexReview.rejectCurrent",
+        "key": "ctrl+k alt+r",
+        "when": "config.latexReview.enableDefaultKeybindings && latexReview.supported && latexReview.enabled && latexReview.hasCurrent && latexReview.writable && !latexReview.busy && editorTextFocus && !isComposing && !editorReadonly"
+      },
+      {
+        "command": "latexReview.nextChange",
+        "key": "ctrl+k alt+n",
+        "when": "config.latexReview.enableDefaultKeybindings && latexReview.supported && latexReview.enabled && !latexReview.busy && editorTextFocus && !isComposing"
+      },
+      {
+        "command": "latexReview.previousChange",
+        "key": "ctrl+k alt+p",
+        "when": "config.latexReview.enableDefaultKeybindings && latexReview.supported && latexReview.enabled && !latexReview.busy && editorTextFocus && !isComposing"
+      },
+      {
+        "command": "latexReview.toggleReview",
+        "key": "ctrl+k alt+t",
+        "when": "config.latexReview.enableDefaultKeybindings && latexReview.supported && editorTextFocus && !isComposing"
+      }
+    ],
+    "configuration": {
+      "title": "%configuration.title%",
+      "properties": {
+        "latexReview.uiLanguage": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "zh-CN",
+            "en",
+            "ja"
+          ],
+          "default": "auto",
+          "description": "%configuration.uiLanguage%"
+        },
+        "latexReview.autoGoToNext": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.autoGoToNext%"
+        },
+        "latexReview.highlightChanges": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.highlightChanges%"
+        },
+        "latexReview.showReviewToolbar": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.showReviewToolbar%"
+        },
+        "latexReview.enableDefaultKeybindings": {
+          "type": "boolean",
+          "default": true,
+          "description": "%configuration.enableDefaultKeybindings%"
+        }
+      }
+    }
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JIE-jiee/latex-change-reviewer.git"
+  },
+  "homepage": "https://github.com/JIE-jiee/latex-change-reviewer#readme",
+  "bugs": {
+    "url": "https://github.com/JIE-jiee/latex-change-reviewer/issues"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run LaTeX Change Reviewer",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--user-data-dir=${workspaceFolder}/.cache/dev-profile",
+        "--extensions-dir=${workspaceFolder}/.cache/dev-extensions",
+        "--disable-extensions",
+        "--crash-reporter-directory=${workspaceFolder}/.cache/dev-crashes"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
+      "preLaunchTask": "npm: compile",
+      "env": {
+        "TEMP": "${workspaceFolder}/.cache/tmp",
+        "TMP": "${workspaceFolder}/.cache/tmp"
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "displayName": "LaTeX 修订审阅器",
+  "description": "逐条审阅并处理 LaTeX 文本修订。",
+  "configuration.title": "LaTeX 修订审阅",
+  "configuration.uiLanguage": "动态审阅控件使用的语言。自动模式跟随 VS Code 界面语言。",
+  "configuration.autoGoToNext": "接受或拒绝当前修订后，自动移动到下一条。",
+  "configuration.highlightChanges": "用边框标出当前修订，并区分其中的新文本和旧文本。",
+  "configuration.showReviewToolbar": "在状态栏显示固定的审阅操作条。",
+  "configuration.enableDefaultKeybindings": "启用扩展默认的两段式快捷键。",
+  "command.acceptCurrent": "LaTeX 修订审阅：接受当前修订",
+  "command.rejectCurrent": "LaTeX 修订审阅：拒绝当前修订",
+  "command.nextChange": "LaTeX 修订审阅：下一条修订",
+  "command.previousChange": "LaTeX 修订审阅：上一条修订",
+  "command.refresh": "LaTeX 修订审阅：刷新修订",
+  "command.toggleReview": "LaTeX 修订审阅：开启／关闭审阅",
+  "command.selectLanguage": "LaTeX 修订审阅：选择界面语言",
+  "command.locateCurrent": "LaTeX 修订审阅：定位当前修订"
+}

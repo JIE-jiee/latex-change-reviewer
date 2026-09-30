@@ -1,0 +1,18 @@
+{
+  "displayName": "LaTeX Change Reviewer",
+  "description": "Review and resolve LaTeX changes one at a time.",
+  "configuration.title": "LaTeX Review",
+  "configuration.uiLanguage": "Language used for dynamic review controls. Auto follows the VS Code display language.",
+  "configuration.autoGoToNext": "Move to the next change after accepting or rejecting the current change.",
+  "configuration.highlightChanges": "Highlight the current change with a border and distinguish its new and old parameter text.",
+  "configuration.showReviewToolbar": "Show the fixed review action bar in the status bar.",
+  "configuration.enableDefaultKeybindings": "Enable the extension's default two-step keyboard shortcuts.",
+  "command.acceptCurrent": "LaTeX Review: Accept Current Change",
+  "command.rejectCurrent": "LaTeX Review: Reject Current Change",
+  "command.nextChange": "LaTeX Review: Next Change",
+  "command.previousChange": "LaTeX Review: Previous Change",
+  "command.refresh": "LaTeX Review: Refresh Changes",
+  "command.toggleReview": "LaTeX Review: Toggle Review",
+  "command.selectLanguage": "LaTeX Review: Select Interface Language",
+  "command.locateCurrent": "LaTeX Review: Locate Current Change"
+}
