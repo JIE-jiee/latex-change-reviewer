@@ -12,7 +12,7 @@
 - 17 项解析／导航单元测试通过。集成测试涵盖单步撤销重做、固定按钮目标、过期与重复目标、嵌套自动跳转、同行编号、导航末尾、解析诊断、三语、文件切换、多编辑器和只读 provider／实际文件属性。
 - VS Code 1.85.2 最低版本与本机 1.139.1 均通过集成测试；已安装 VSIX 的隔离测试也在两版本通过。
 - 用 computer-use 实际验证鼠标接受／拒绝、Ctrl+K 后 Alt+R、自动跳转、Ctrl+Z、计数恢复与右键菜单。只操作本目录测试文档，未操作用户论文。
-- 早期 0.1.0 安装包已移除，保留最新版；未安装日常 VS Code，未发布市场。尚无用户实际文稿用于进一步兼容检查。
+- 早期 0.1.0 安装包已移除，保留最新版；开发阶段未自动安装日常 VS Code。用户现已确认市场版本可搜索并使用。尚无用户实际文稿用于进一步兼容检查。
 
 ## 0.2.0 易用性改进（已完成）
 
@@ -35,10 +35,10 @@
 
 - 图标、两张 0.2.1 真实截图、中英日文案、商店预览页面及配置已准备；截图展示无内嵌标签和同行编号。
 - MIT 许可证、更新记录、关键词、免费标签、图标与截图已纳入安装包；无需绕过许可证检查。
-- `npm run package:marketplace -- --publisher 注册的ID` 在打包暂存区设置正式身份，保留本地开发身份；尚未向 VS Code 市场提交。
+- `npm run package:marketplace -- --publisher 注册的ID` 在打包暂存区设置正式身份，保留本地开发身份；用户已上传正式包并确认上架。
 - 0.2.1 已通过 17 项单元测试和本机 VS Code 已安装预览包的集成测试；真实界面验证无内嵌标签、接受后自动下一条。安装包的图标、许可证、截图和公开图片 URL 已核对。
 - GitHub 仓库已公开并识别 MIT，v0.2.1 预览包已上传 Releases，图片无需登录即可访问。
-- 用户已创建发布者：名称 Unfinished draft，ID Unfinished-draft。正式包为 artifacts/latex-change-reviewer-0.2.1-marketplace.vsix，尚未提交市场。
+- 用户已创建发布者：名称 Unfinished draft，ID Unfinished-draft。正式包为 artifacts/latex-change-reviewer-0.2.1-marketplace.vsix。用户于 2026-09-30 确认 0.2.1 已可在 VS Code 扩展市场找到并使用；README、三语安装说明和商店素材同步为已上架。商店地址：https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer。
 
 ## 范围边界
 

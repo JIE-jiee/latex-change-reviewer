@@ -1,6 +1,6 @@
 # LaTeX Change Reviewer
 
-> 插件市场详情页草稿｜尚未上架。当前可通过 VSIX 预览安装。
+> 已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，发布者：Unfinished draft。
 
 ## 中文
 
@@ -16,7 +16,7 @@ LaTeX Change Reviewer 是一个 VS Code 插件，帮你在 `.tex` 源码中逐�
 
 ### 使用步骤
 
-1. 通过 **Extensions: Install from VSIX… / 扩展：从 VSIX 安装** 安装预览版 `.vsix`。
+1. 在 VS Code 扩展面板搜索 **LaTeX Change Reviewer**，选择发布者 **Unfinished draft**，点击安装。
 2. 在 VS Code 中打开 `.tex` 文件，点击编辑器标题栏的清单图标开启审阅。
 3. 查看新旧文本，点击接受或拒绝；也可导航到上一条或下一条。
 4. 修改会留在编辑器中，由你决定何时保存。关闭审阅可再次点击清单图标。
@@ -32,12 +32,12 @@ LaTeX Change Reviewer 是一个 VS Code 插件，帮你在 `.tex` 源码中逐�
 - 面向 Windows 桌面版 VS Code 1.85.2 或更高版本。首轮已在 Windows 桌面 VS Code 验证；其他系统、Web 和 Remote 环境尚未验证。
 - 适合标准 changes 宏写法。自定义宏、复杂 TeX 条件和特殊宏展开不在支持范围；只读文件不能接受或拒绝。插件不扫描整个项目、不提供批量处理或 PDF 对照。
 
-插件免费使用，采用 MIT 许可。源码和问题反馈见 [GitHub](https://github.com/JIE-jiee/latex-change-reviewer)。当前尚未上架 VS Code 扩展市场，预览请安装 `.vsix` 文件。
+插件免费使用，采用 MIT 许可。源码和问题反馈见 [GitHub](https://github.com/JIE-jiee/latex-change-reviewer)。可从 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer) 直接安装。离线安装请选择 GitHub Releases 中带 `-marketplace.vsix` 的正式安装包。
 
 ## English
 
-Review LaTeX edits one at a time in VS Code. Compare the old and new text, then click **Accept** or **Reject**. Each decision updates the open source file and moves to the next change by default. Use `Ctrl+Z` to undo. Install the preview from a `.vsix` file using **Extensions: Install from VSIX…**. Supports standard `\added`, `\deleted`, and `\replaced{new}{old}` changes commands. The extension is not yet published on the VS Code Marketplace. Windows desktop support has been verified; Web, Remote, and other operating systems have not.
+Review LaTeX edits one at a time in VS Code. Compare the old and new text, then click **Accept** or **Reject**. Each decision updates the open source file and moves to the next change by default. Use `Ctrl+Z` to undo. Install directly in VS Code: search LaTeX Change Reviewer in Extensions and choose publisher Unfinished draft. Supports standard `\added`, `\deleted`, and `\replaced{new}{old}` changes commands. Available now on the VS Code Marketplace. Windows desktop support has been verified; Web, Remote, and other operating systems have not.
 
 ## 日本語
 
-VS Code で LaTeX の変更を一件ずつ確認できます。新旧の文章を見比べて**承認**または**却下**をクリックすると、開いているソースが更新され、既定では次の変更へ移動します。`Ctrl+Z` で元に戻せます。`.vsix` ファイルを **Extensions: Install from VSIX…** からインストールしてください。標準的な `\added`、`\deleted`、`\replaced{新しい文}{元の文}` に対応します。VS Code Marketplace にはまだ公開されていません。Windows デスクトップ版で動作確認済みです。Web、Remote、その他の OS は未検証です。
+VS Code で LaTeX の変更を一件ずつ確認できます。新旧の文章を見比べて**承認**または**却下**をクリックすると、開いているソースが更新され、既定では次の変更へ移動します。`Ctrl+Z` で元に戻せます。VS Code の拡張機能で LaTeX Change Reviewer を検索し、発行者 Unfinished draft を選んでインストールしてください。標準的な `\added`、`\deleted`、`\replaced{新しい文}{元の文}` に対応します。VS Code Marketplace で公開されています。Windows デスクトップ版で動作確認済みです。Web、Remote、その他の OS は未検証です。
