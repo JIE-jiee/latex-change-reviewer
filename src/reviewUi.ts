@@ -112,10 +112,7 @@ export class ReviewUi implements vscode.Disposable {
       const newArg = change?.type === 'deleted' ? undefined : change?.args[0];
       const oldArg = change?.type === 'replaced' ? change.args[1] : change?.type === 'deleted' ? change.args[0] : undefined;
       const options = (argument: { start: number; end: number } | undefined, key: string): vscode.DecorationOptions[] =>
-        argument ? [{ range: this.range(editor, argument), hoverMessage: t(key), renderOptions: {
-          before: { contentText: `[${t(key)}] `, fontWeight: 'bold', color: new vscode.ThemeColor('editor.foreground'),
-            backgroundColor: new vscode.ThemeColor('editor.background'), margin: '0 0.35em 0 0' }
-        } }] : [];
+        argument ? [{ range: this.range(editor, argument), hoverMessage: t(key) }] : [];
       editor.setDecorations(this.newText, options(newArg, 'newText'));
       editor.setDecorations(this.oldText, options(oldArg, 'oldText'));
     }

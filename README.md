@@ -9,12 +9,16 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 ## 它怎样帮助你审阅
 
 - **用鼠标逐条决定。** 修订上方显示“接受｜拒绝｜下一条”，底部还有固定操作条，不必反复寻找按钮。
-- **看清正在审阅什么。** 当前修订带有箭头和边框，新旧文本有文字标签和不同底色；底部显示当前序号与剩余数量。
+- **看清正在审阅什么。** 当前修订带有箭头和边框，新旧文本以不同底色区分，悬停可查看说明；底部显示当前序号与剩余数量。
 - **连贯地检查修改。** 接受或拒绝后自动进入下一条，也可以随时回到上一条。到文件末尾时停止，不会自动绕回开头。
 - **点错可以撤销。** 每次决定都能单独用 Ctrl+Z 恢复。插件保留原有换行和空格，不会自动排版或保存文档。
 - **按你的习惯使用。** 支持简体中文、English、日本語，可随时开启或关闭审阅，也可以使用辅助快捷键。
 
-插件在本地工作，不会上传文稿。不需要账号、LaTeX Workshop 或 TeX 编译环境。
+插件在本地工作，不会上传文稿。不需要账号、LaTeX Workshop 或 TeX 编译环境。免费使用，采用 [MIT 许可](LICENSE)。
+
+![逐条审阅与当前修订高亮](media/screenshots/review.jpg)
+
+**同一行有多处修订时怎么看按钮？** 插件会在每组按钮前显示 `[1]`、`[2]` 等编号，按这一条源码行中修订出现的先后顺序区分目标。例如，`[1] 接受` 处理第一处修订，`[2] 拒绝` 处理第二处修订；编号相同的“下一条”从对应修订向后导航。即使光标在别处，点击按钮仍处理它对应的修订。文字因窗口宽度自动折成多行，仍属于同一条源码行。这里的编号只用于当前行，处理修订后会重新排列，不是全文修订序号，也不会写入文稿。
 
 ## 安装后，三步开始
 
@@ -28,7 +32,7 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 
 你仍然可以照常编辑和保存文件。若 VS Code 本身开启了自动保存，保存行为仍由它的设置决定。需要撤销时按 Ctrl+Z；Windows 下可用 Ctrl+Y 重做。
 
-> 当前仓库为私有，版本下载页需要具有仓库访问权限的 GitHub 账号。已拿到 .vsix 文件的使用者可以直接安装，无需登录 GitHub。插件暂未上架 VS Code 扩展市场。
+插件尚未上架 VS Code 扩展市场，当前请从公开的 GitHub 版本页下载安装包。使用过程中遇到问题，可在 [问题反馈](https://github.com/JIE-jiee/latex-change-reviewer/issues) 中说明现象，并附上不含隐私内容的最小示例。
 
 ## 接受与拒绝会得到什么
 
@@ -48,6 +52,8 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 
 点击**接受**，得到“实验结果显著提高。”；点击**拒绝**，得到“实验结果略有提高。”。修改会真正写入编辑器中的源码，随后由你决定是否保存。
 
+![接受一条修订后，自动进入下一条](media/screenshots/after-accept.jpg)
+
 多行文字、公式和引用也可以一起审阅。插件精确保留所选文字的原始换行、缩进和空格，所以处理后可能仍有原来参数中的空行。
 
 ## 切换语言与调整操作方式
@@ -61,7 +67,7 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 | 设置 | 默认行为 |
 |---|---|
 | `latexReview.autoGoToNext` | 接受或拒绝后自动进入下一条；可关闭 |
-| `latexReview.highlightChanges` | 显示当前修订的边框、新旧文字标记；可关闭 |
+| `latexReview.highlightChanges` | 显示当前修订的边框和新旧文本底色；可关闭 |
 | `latexReview.showReviewToolbar` | 显示底部固定操作条；可关闭 |
 | `latexReview.uiLanguage` | 跟随 VS Code；可选 zh-CN、en、ja |
 | `latexReview.enableDefaultKeybindings` | 启用辅助快捷键；可关闭或自行改键 |
@@ -96,13 +102,13 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 
 **LaTeX Change Reviewer is a VS Code extension for reviewing LaTeX edits one at a time.** Read the old and new text, then click Accept or Reject in the editor or the fixed status bar. Each decision updates your source and moves to the next change by default.
 
-Download the .vsix from [Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases/latest), install it with **Extensions: Install from VSIX…**, open a .tex file, and click the checklist icon to start reviewing. The repository is currently private; downloading requires repository access. Use `\replaced{new}{old}`. Ctrl+Z undoes each decision. Choose **Select Interface Language** to switch languages.
+Download the .vsix from [Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases/latest), install it with **Extensions: Install from VSIX…**, open a .tex file, and click the checklist icon to start reviewing. The extension is free to use under the MIT license; the source is public on GitHub. Use `\replaced{new}{old}`. Ctrl+Z undoes each decision. Choose **Select Interface Language** to switch languages.
 
 ## 日本語クイックスタート
 
 **LaTeX Change Reviewer は、LaTeX の修正を一件ずつ確認するための VS Code 拡張機能です。** 新旧の文章を見比べ、エディター内またはステータスバーの「承認」「却下」をクリックすると、ソースが更新され、既定では次の変更へ移動します。
 
-[Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases/latest) から .vsix をダウンロードし、**Extensions: Install from VSIX…** でインストールします。.tex を開き、チェックリストアイコンでレビューを開始してください。リポジトリは現在非公開のため、ダウンロードにはアクセス権が必要です。`\replaced{新しい文}{元の文}` の順で指定します。Ctrl+Z で操作ごとに元に戻せます。表示言語は言語選択コマンドから切り替えられます。
+[Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases/latest) から .vsix をダウンロードし、**Extensions: Install from VSIX…** でインストールします。.tex を開き、チェックリストアイコンでレビューを開始してください。MIT ライセンスで無料で利用でき、ソースは GitHub で公開されています。`\replaced{新しい文}{元の文}` の順で指定します。Ctrl+Z で操作ごとに元に戻せます。表示言語は言語選択コマンドから切り替えられます。
 
 <details>
 <summary>开发：从源码运行、测试与打包</summary>
@@ -150,8 +156,18 @@ npm.cmd run test:integration
 npm.cmd run package
 ```
 
-得到 `artifacts/latex-change-reviewer-0.2.0.vsix`。产物版本从 `package.json` 读取。可以分享此文件供他人安装；开发依赖、缓存和测试文件不包含在安装包中。安装包也可从 [GitHub Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases) 下载。未发布 VS Code 市场，暂未授予开源许可证。
+得到 `artifacts/latex-change-reviewer-0.2.1.vsix`。产物版本从 `package.json` 读取。可以分享此文件供他人安装；开发依赖、缓存和测试文件不包含在安装包中。安装包也可从 [GitHub Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases) 下载。VS Code 扩展市场素材已准备，正式发布者 ID 待确定；采用 MIT 许可，源码公开。
 
+
+### 准备商店安装包
+
+[商店页面预览](media/store/preview.html) 与 [上架字段](media/store/listing.json) 可用于核对介绍、图标和截图。常规 `npm run package` 生成可试装的预览包，仍使用开发身份。注册自己的 Marketplace 发布者后，可运行：
+
+```powershell
+npm.cmd run package:marketplace -- --publisher YOUR-PUBLISHER-ID
+```
+
+此命令只在打包暂存区替换发布者 ID，生成名称带 `-marketplace` 的安装包，不执行发布。通过 [Marketplace 管理页面](https://marketplace.visualstudio.com/manage) 上传前，应核对正式发布者、版本及商店内容。
 
 ### 支持细节与验证
 

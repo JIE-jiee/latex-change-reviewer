@@ -1,0 +1,25 @@
+{
+  "name": "latex-change-reviewer",
+  "displayName": "LaTeX Change Reviewer",
+  "publisher": null,
+  "version": "0.2.1",
+  "description": "让 LaTeX 审阅更方便的 VS Code 插件：对照新旧文字，用鼠标逐条接受或拒绝修订，支持中英日界面。",
+  "pricing": "Free",
+  "license": "MIT",
+  "icon": "../icon.png",
+  "screenshots": [
+    "../screenshots/review.jpg",
+    "../screenshots/after-accept.jpg"
+  ],
+  "homepage": "https://github.com/JIE-jiee/latex-change-reviewer#readme",
+  "feedback": "https://github.com/JIE-jiee/latex-change-reviewer/issues",
+  "keywords": [
+    "latex",
+    "changes",
+    "review",
+    "track changes",
+    "accept",
+    "reject"
+  ],
+  "publicationStatus": "preview; registered publisher ID pending"
+}

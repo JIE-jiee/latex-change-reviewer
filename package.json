@@ -3,7 +3,7 @@
   "displayName": "%displayName%",
   "description": "%description%",
   "publisher": "local-latex-tools",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "engines": {
     "vscode": "^1.85.2"
   },
@@ -19,7 +19,8 @@
     "compile": "tsc -p .",
     "test": "npm run compile && node --test dist/tests/parser.test.js dist/tests/navigation.test.js",
     "package": "npm run compile && node scripts/package.cjs",
-    "test:integration": "npm run compile && node dist/tests/runIntegration.js"
+    "test:integration": "npm run compile && node dist/tests/runIntegration.js",
+    "package:marketplace": "npm run compile && node scripts/package.cjs --marketplace"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
@@ -199,7 +200,7 @@
       }
     }
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/JIE-jiee/latex-change-reviewer.git"
@@ -207,5 +208,19 @@
   "homepage": "https://github.com/JIE-jiee/latex-change-reviewer#readme",
   "bugs": {
     "url": "https://github.com/JIE-jiee/latex-change-reviewer/issues"
-  }
+  },
+  "icon": "media/icon.png",
+  "keywords": [
+    "latex",
+    "changes",
+    "review",
+    "track changes",
+    "accept",
+    "reject"
+  ],
+  "galleryBanner": {
+    "color": "#12233a",
+    "theme": "dark"
+  },
+  "pricing": "Free"
 }
