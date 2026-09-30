@@ -1,7 +1,7 @@
 {
   "name": "latex-change-reviewer",
   "displayName": "LaTeX Change Reviewer",
-  "publisher": null,
+  "publisher": "Unfinished-draft",
   "version": "0.2.1",
   "description": "让 LaTeX 审阅更方便的 VS Code 插件：对照新旧文字，用鼠标逐条接受或拒绝修订，支持中英日界面。",
   "pricing": "Free",
@@ -21,5 +21,6 @@
     "accept",
     "reject"
   ],
-  "publicationStatus": "preview; registered publisher ID pending"
+  "publicationStatus": "publisher confirmed; Marketplace submission pending",
+  "publisherDisplayName": "Unfinished draft"
 }

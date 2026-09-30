@@ -156,15 +156,15 @@ npm.cmd run test:integration
 npm.cmd run package
 ```
 
-得到 `artifacts/latex-change-reviewer-0.2.1.vsix`。产物版本从 `package.json` 读取。可以分享此文件供他人安装；开发依赖、缓存和测试文件不包含在安装包中。安装包也可从 [GitHub Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases) 下载。VS Code 扩展市场素材已准备，正式发布者 ID 待确定；采用 MIT 许可，源码公开。
+得到 `artifacts/latex-change-reviewer-0.2.1.vsix`。产物版本从 `package.json` 读取。可以分享此文件供他人安装；开发依赖、缓存和测试文件不包含在安装包中。安装包也可从 [GitHub Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases) 下载。VS Code 扩展市场素材已准备，发布者为 Unfinished draft（Unfinished-draft），尚未提交市场；采用 MIT 许可，源码公开。
 
 
 ### 准备商店安装包
 
-[商店页面预览](media/store/preview.html) 与 [上架字段](media/store/listing.json) 可用于核对介绍、图标和截图。常规 `npm run package` 生成可试装的预览包，仍使用开发身份。注册自己的 Marketplace 发布者后，可运行：
+[商店页面预览](media/store/preview.html) 与 [上架字段](media/store/listing.json) 可用于核对介绍、图标和截图。常规 `npm run package` 生成可试装的预览包，仍使用开发身份。已注册发布者 Unfinished draft（ID：`Unfinished-draft`）。生成正式身份的安装包可运行：
 
 ```powershell
-npm.cmd run package:marketplace -- --publisher YOUR-PUBLISHER-ID
+npm.cmd run package:marketplace -- --publisher Unfinished-draft
 ```
 
 此命令只在打包暂存区替换发布者 ID，生成名称带 `-marketplace` 的安装包，不执行发布。通过 [Marketplace 管理页面](https://marketplace.visualstudio.com/manage) 上传前，应核对正式发布者、版本及商店内容。
