@@ -6,7 +6,7 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 
 你可以先对照新旧文字，再决定是否保留修改。点击后，插件会直接更新 .tex 源码，默认带你进入下一条修订。整个过程都在熟悉的 VS Code 编辑器中完成。
 
-**已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，可直接搜索 LaTeX Change Reviewer 安装。发布者：Unfinished draft。**
+**推荐直接在 VS Code 扩展面板搜索安装。** 已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，可直接搜索 LaTeX Change Reviewer 安装。发布者：Unfinished draft。
 
 ## 它怎样帮助你审阅
 
@@ -158,7 +158,7 @@ npm.cmd run test:integration
 npm.cmd run package
 ```
 
-得到 `artifacts/latex-change-reviewer-0.2.1.vsix`。产物版本从 `package.json` 读取。可以分享此文件供他人安装；开发依赖、缓存和测试文件不包含在安装包中。安装包也可从 [GitHub Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases) 下载。插件已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，发布者为 Unfinished draft（Unfinished-draft）；采用 MIT 许可，源码公开。常规打包使用本地开发身份，日常安装和分享请使用商店版本或正式身份安装包。
+得到 `artifacts/latex-change-reviewer-0.2.2.vsix`。产物版本从 `package.json` 读取。此包用于开发测试；日常用户请从扩展市场安装。开发依赖、缓存和测试文件不包含在安装包中。安装包也可从 [GitHub Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases) 下载。插件已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，发布者为 Unfinished draft（Unfinished-draft）；采用 MIT 许可，源码公开。常规打包使用本地开发身份，日常安装和分享请使用商店版本或正式身份安装包。
 
 
 ### 准备商店安装包

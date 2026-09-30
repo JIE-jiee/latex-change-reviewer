@@ -40,6 +40,11 @@
 - GitHub 仓库已公开并识别 MIT，v0.2.1 预览包已上传 Releases，图片无需登录即可访问。
 - 用户已创建发布者：名称 Unfinished draft，ID Unfinished-draft。正式包为 artifacts/latex-change-reviewer-0.2.1-marketplace.vsix。用户于 2026-09-30 确认 0.2.1 已可在 VS Code 扩展市场找到并使用；README、三语安装说明和商店素材同步为已上架。商店地址：https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer。
 
+## 0.2.2 商店安装说明更新
+
+- README 中英日安装入口改为优先在 VS Code 扩展面板直接搜索安装；离线 VSIX 仅作备用。已编译并生成 artifacts/latex-change-reviewer-0.2.2-marketplace.vsix，核验正式发布者、版本和包内 README。
+- 已在登录的 Marketplace 管理页打开 Update 上传窗口；浏览器扩展未获本地文件访问权限，自动上传未完成。0.2.1 仍为公开版本，待用户手动上传或启用文件访问后继续；不能将新文案视为已经上线。
+
 ## 范围边界
 
 不做项目扫描、AI、PDF 联动、独立侧栏或批量操作。不展开自定义宏、复杂条件和字符类别修改。不自动安装日常扩展目录或发布市场。
