@@ -24,7 +24,7 @@
 
 ## GitHub 分发
 
-用户已授权推送到 GitHub。仓库 JIE-jiee/latex-change-reviewer，首次创建为私有；源码纳入 Git，VSIX 放在 Releases，依赖和缓存不上传，暂不新增开源许可。
+用户已授权推送到 GitHub。仓库 JIE-jiee/latex-change-reviewer，首次创建为私有；源码纳入 Git，VSIX 放在 Releases，依赖和缓存不上传，暂不新增开源许可。介绍面向使用者，明确为 VS Code 插件；README 优先说明用途、安装与审阅流程，开发信息折叠在末尾。
 
 ## 范围边界
 

@@ -1,6 +1,6 @@
 {
   "displayName": "LaTeX 修订审阅器",
-  "description": "逐条审阅并处理 LaTeX 文本修订。",
+  "description": "帮助你更方便地审阅 LaTeX 文档的 VS Code 插件：对照新旧文字，逐条点击接受或拒绝修订。",
   "configuration.title": "LaTeX 修订审阅",
   "configuration.uiLanguage": "动态审阅控件使用的语言。自动模式跟随 VS Code 界面语言。",
   "configuration.autoGoToNext": "接受或拒绝当前修订后，自动移动到下一条。",

@@ -1,6 +1,6 @@
 {
   "displayName": "LaTeX Change Reviewer",
-  "description": "Review and resolve LaTeX changes one at a time.",
+  "description": "A VS Code extension to review LaTeX edits more easily: compare text and accept or reject changes one at a time.",
   "configuration.title": "LaTeX Review",
   "configuration.uiLanguage": "Language used for dynamic review controls. Auto follows the VS Code display language.",
   "configuration.autoGoToNext": "Move to the next change after accepting or rejecting the current change.",
