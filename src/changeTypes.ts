@@ -13,6 +13,18 @@ export interface LatexChange extends OffsetRange {
     children: LatexChange[];
     /** Malformed nested changes make reviewing the parent unsafe. */
     blocked?: boolean;
+    optionalRange?: OffsetRange;
+    authorId?: string;
+    comment?: LatexComment;
+}
+
+export interface LatexComment extends OffsetRange {
+    kind: 'attached' | 'highlight' | 'standalone';
+    contentRange: OffsetRange;
+    anchorRange: OffsetRange;
+    optionalRange?: OffsetRange;
+    /** Owner is intentionally omitted by the parser to avoid cyclic object graphs. */
+    owner?: LatexChange;
 }
 
 export interface ParseIssue extends OffsetRange {
@@ -23,4 +35,6 @@ export interface ParseResult {
     /** Only changes which have no enclosing change are returned here. */
     changes: LatexChange[];
     issues: ParseIssue[];
+    /** All comments in source order, including comments nested in changes. */
+    comments: LatexComment[];
 }

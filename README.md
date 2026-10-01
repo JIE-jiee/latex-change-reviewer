@@ -8,6 +8,24 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 
 **推荐直接在 VS Code 扩展面板搜索安装。** 已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，可直接搜索 LaTeX Change Reviewer 安装。发布者：Unfinished draft。
 
+## 0.3.0 新增记录修订与批注
+
+现在可以在 VS Code 的 LaTeX 源码中直接编辑，并把新增、删除和替换记录为 `\added{新文字}`、`\deleted{旧文字}`、`\replaced{新文字}{旧文字}`。连续输入会归入同一处修订；在新增文字或替换的新文本中继续修改，也会更新原有修订。
+
+左下角有两个独立开关：**审阅工具**用于查看、接受、拒绝和导航已有修订，也可处理批注；**记录修订**用于把当前文件中的编辑记为修订。关闭一个不会影响另一个。审阅工具会记住工作区状态；记录修订仅对当前文件和本次会话有效，默认关闭。
+
+要记录修改，打开 `.tex` 文件，点击左下角的**记录修订**即可开启；再次点击即可关闭。添加批注时先开启**审阅工具**，然后在正文中右键操作。
+
+在正文中选中文字后，右键选择**添加批注**，即可为选区或现有修订写下意见；没有选区时可以添加独立批注。批注支持悬停阅读、编辑、移除和导航，每个目标保存一条意见。接受或拒绝带批注的修订时，意见会随该修订一起移除；移除普通文字上的批注会保留文字。
+
+记录修订适用于单光标正文和边界完整的常见引用、行内公式。导言区、命令定义、注释、代码环境、修订旧文本及跨结构编辑不会自动记录。无法安全转换的编辑会保留在文档中并暂停记录；可查看差异、撤销，或从当前内容重新开启记录。中文和日文输入法组合期间保持原生输入，确认或取消后再记录。
+
+已知限制：输入法组合未完成时快速切换系统输入法，可能导致记录暂停并留下未标记的原生输入；切换前请先确认或取消组合。与接管键入的其他扩展尚未验证兼容性。若文件在编辑过程中变为只读，可通过提示查看并复制未写入的输入。
+
+除直接编辑外，命令面板也提供主动标记新增、删除、替换及合并所选相邻修订。合并仅适用于同类型、同作者、无批注且没有结构边界的相邻修订。记录所用的输入命令仅在开启记录时转交；关闭后恢复 VS Code 的普通编辑操作。
+
+作者标记可通过 `latexReview.authorId` 设置为文档已有的 `changes` 作者 ID。编译时请在导言区加载 `\usepackage{changes}`；使用作者 ID 时还需配置 `\definechangesauthor{你的ID}{...}`。插件不会自动修改导言区；不设置作者也可以使用。
+
 ## 它怎样帮助你审阅
 
 - **用鼠标逐条决定。** 修订上方显示“接受｜拒绝｜下一条”，底部还有固定操作条，不必反复寻找按钮。
@@ -72,7 +90,8 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 | `latexReview.highlightChanges` | 显示当前修订的边框和新旧文本底色；可关闭 |
 | `latexReview.showReviewToolbar` | 显示底部固定操作条；可关闭 |
 | `latexReview.uiLanguage` | 跟随 VS Code；可选 zh-CN、en、ja |
-| `latexReview.enableDefaultKeybindings` | 启用辅助快捷键；可关闭或自行改键 |
+| `latexReview.authorId` | 默认为空；可填文稿已有的 changes 作者 ID |
+| `latexReview.enableDefaultKeybindings` | 启用辅助快捷键；可关闭或自行改键。此设置不控制记录模式所需的退格、删除、粘贴和剪切转交键位 |
 
 鼠标是主要操作方式。习惯键盘操作时，可先按 **Ctrl+K**，松开后再按以下组合：
 
@@ -84,7 +103,7 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 | Alt+P | 上一条 |
 | Alt+T | 开启／关闭审阅 |
 
-接受或拒绝当前修订时，把光标放在修订内部即可。底部修订类型与序号按钮可以把视图带回当前目标；剩余数量入口可以定位当前或附近的修订。右键菜单和命令面板也提供审阅操作。
+接受或拒绝当前修订时，把光标放在修订内部即可。底部修订类型与序号按钮可以把视图带回当前目标；剩余数量入口可以定位当前或附近的修订。右键菜单和命令面板也提供审阅操作。审阅工具关闭时，仍可单独开启记录修订；记录模式必要的原生命令转交不依赖审阅界面开关。
 
 如果看不到修订上方的按钮，请检查 VS Code 的 **Editor: Code Lens** 是否开启，或直接使用底部操作条。快捷键仅在 LaTeX 编辑器获得焦点且未进行输入法组合输入时生效；其他扩展的键位可能需要自行协调。
 
@@ -106,11 +125,27 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 
 Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer), or search **LaTeX Change Reviewer** in Extensions and choose publisher **Unfinished draft**. Open a .tex file and click the checklist icon to start reviewing. For offline installation, use the `-marketplace.vsix` file from [Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases/latest). The extension is free to use under the MIT license; the source is public on GitHub. Use `\replaced{new}{old}`. Ctrl+Z undoes each decision. Choose **Select Interface Language** to switch languages.
 
+Version 0.3.0 adds optional revision recording and comments. Turn on **Track changes** to edit in the source editor and record additions, deletions, and replacements as `\added{new}`, `\deleted{old}`, and `\replaced{new}{old}`. Turn on **Review Tools** to inspect, accept, reject, navigate, and comment on changes. The switches work independently; recording is off by default and applies to the current file for this session.
+
+Select text and choose **Add Comment** from the context menu to attach a comment to the selection or a revision. With no selection, the extension inserts a standalone comment. Comments can be read on hover, edited, removed, and navigated. There is one comment per target, with no reply threads. Accepting or rejecting a commented revision removes its comment; removing a comment from ordinary text preserves the text.
+
+Recording supports single-cursor body edits and complete, common references and inline math. It does not automatically record edits to the preamble, definitions, comments, code environments, old branches of revisions, or edits across structural boundaries. If an edit cannot be converted safely, the text is kept and recording pauses; inspect the diff, undo, or resume from the current text. Chinese and Japanese IME input stays native until composition is confirmed or cancelled.
+
+Known limits: switching system input methods before composition finishes may pause recording and leave native, unmarked text. Confirm or cancel composition before switching. Compatibility with other extensions that take over typing has not been verified. If the document becomes read-only during an edit, the notice lets you view and copy input that could not be written.
+
 ## 日本語クイックスタート
 
 **LaTeX Change Reviewer は、LaTeX の修正を一件ずつ確認するための VS Code 拡張機能です。** 新旧の文章を見比べ、エディター内またはステータスバーの「承認」「却下」をクリックすると、ソースが更新され、既定では次の変更へ移動します。
 
 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer) からインストールできます。拡張機能で **LaTeX Change Reviewer** を検索し、発行者 **Unfinished draft** を選んでください。オフラインの場合は [Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases/latest) の `-marketplace.vsix` を使用できます。.tex を開き、チェックリストアイコンでレビューを開始してください。MIT ライセンスで無料で利用でき、ソースは GitHub で公開されています。`\replaced{新しい文}{元の文}` の順で指定します。Ctrl+Z で操作ごとに元に戻せます。表示言語は言語選択コマンドから切り替えられます。
+
+バージョン 0.3.0 では、修正の記録とコメントに対応しました。**変更記録**をオンにしてソースを編集すると、追加・削除・置換を `\added{新しい文}`、`\deleted{元の文}`、`\replaced{新しい文}{元の文}` として記録します。**レビュー ツール**をオンにすると、修正の確認、承認、却下、移動、コメントができます。2 つのスイッチは独立しており、記録は既定でオフ、現在のファイルとセッション内で有効です。
+
+文字を選択して右クリックし、**コメントの追加**を選ぶと、選択範囲または修正にコメントを付けられます。選択範囲がない場合は独立したコメントを追加します。コメントはホバーで読めるほか、編集、削除、移動ができます。各対象につきコメントは 1 件で、返信スレッドには対応していません。コメント付き修正を承認または却下するとコメントも削除されます。通常の文章からコメントだけを削除した場合、文章は残ります。
+
+記録機能は、単一カーソルでの本文編集と、構造が完結した一般的な参照・インライン数式に対応します。プリアンブル、定義、コメント、コード環境、修正前の文章、構造境界をまたぐ編集は自動記録しません。安全に変換できない場合は入力を残して記録を一時停止します。差分を確認して元に戻すか、現在の内容から記録を再開してください。中国語・日本語 IME は入力確定または取消まで標準処理されます。
+
+既知の制限：IME の入力確定前にシステム入力方式を素早く切り替えると、記録が一時停止し、IME 標準の未記録文字が残る場合があります。切り替える前に入力を確定または取り消してください。入力を引き継ぐ他の拡張機能との互換性は未確認です。編集中に読み取り専用へ変わった場合は、通知から書き込めなかった入力を確認・コピーできます。
 
 <details>
 <summary>开发：从源码运行、测试与打包</summary>
@@ -118,7 +153,7 @@ Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/item
 ### 从源码运行
 
 ```text
-src/                 扩展入口、解析与类型、审阅控制器、导航、动态三语
+src/                 扩展入口、解析与类型、审阅／导航、修订记录、批注及文本转换、动态三语
 tests/               解析／导航单元测试、VS Code 集成测试与启动器
 .vscode/             F5 启动配置和编译任务
 package*.json        清单、依赖锁与静态中英日文案
@@ -158,7 +193,7 @@ npm.cmd run test:integration
 npm.cmd run package
 ```
 
-得到 `artifacts/latex-change-reviewer-0.2.2.vsix`。产物版本从 `package.json` 读取。此包用于开发测试；日常用户请从扩展市场安装。开发依赖、缓存和测试文件不包含在安装包中。安装包也可从 [GitHub Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases) 下载。插件已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，发布者为 Unfinished draft（Unfinished-draft）；采用 MIT 许可，源码公开。常规打包使用本地开发身份，日常安装和分享请使用商店版本或正式身份安装包。
+得到 `artifacts/latex-change-reviewer-<版本>.vsix`（例如 `latex-change-reviewer-0.3.0.vsix`）。产物版本从 `package.json` 读取。此包用于开发测试；日常用户请从扩展市场安装。开发依赖、缓存和测试文件不包含在安装包中。安装包也可从 [GitHub Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases) 下载。插件已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，发布者为 Unfinished draft（Unfinished-draft）；采用 MIT 许可，源码公开。常规打包使用本地开发身份，日常安装和分享请使用商店版本或正式身份安装包。
 
 
 ### 准备商店安装包
@@ -173,8 +208,10 @@ npm.cmd run package:marketplace -- --publisher Unfinished-draft
 
 ### 支持细节与验证
 
+记录模式按条件转交普通输入、删除、粘贴及剪切命令，使修订包装和正文进入同一撤销步骤。IME 组合期间保持原生处理，明确结束后转换；500 ms 调度不用于判定输入法是否完成。无法识别的外部修改保留原文结果并暂停。未闭合公式、注释或定义中的伪正文起点不会被当作安全的正文范围。
+
 解析支持 CRLF、参数间注释、转义百分号与花括号、标准可选参数；忽略 \verb、\verb*、verbatim、verbatim*、lstlisting、minted 和常见 \newcommand、\renewcommand、\providecommand、\DeclareRobustCommand 定义。不展开 \def、xparse、自定义宏、复杂条件或字符类别变化。
 
-0.2.0 已通过 17 项解析／导航单元测试，以及 VS Code 1.85.2 与 1.139.1 的源码和安装包集成测试。隔离窗口中已验证鼠标审阅、导航、开关、快捷键和撤销。尚未验证使用者真实文稿中的特殊宏工作流。
+0.3.0 已通过 38 项自动测试，以及 VS Code 1.85.2 与 1.139.1 的源码和安装包集成测试。隔离窗口中已实际验证中日文输入法、修订记录、批注保存与撤销。尚未验证使用者真实文稿中的特殊宏工作流。
 
 </details>

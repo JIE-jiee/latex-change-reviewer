@@ -1,8 +1,9 @@
-import { ChangeType, LatexChange, OffsetRange, ParseIssue, ParseResult, ReviewDecision } from './changeTypes';
+import { ChangeType, LatexChange, LatexComment, OffsetRange, ParseIssue, ParseResult, ReviewDecision } from './changeTypes';
 
 type Group = OffsetRange & { close: number };
 type Command = { name: string; end: number };
 type Spec = { type: ChangeType; count: number };
+type ScanContext = { comments: LatexComment[] };
 
 const REVIEW: Record<string, Spec> = {
     added: { type: 'added', count: 1 }, deleted: { type: 'deleted', count: 1 }, replaced: { type: 'replaced', count: 2 },
@@ -80,6 +81,45 @@ function parseOptional(text: string, at: number, limit: number): Group | undefin
     return parseDelimited(text, at, '[', ']', limit);
 }
 
+/** Find a top-level key=value field without splitting commas inside TeX groups. */
+function optionalFields(text: string, range: OffsetRange): Array<{ key: string; value: OffsetRange; rawValue: string; hasEquals: boolean }> {
+    const result: Array<{ key: string; value: OffsetRange; rawValue: string; hasEquals: boolean }> = [];
+    let from = range.start;
+    let braces = 0;
+    for (let i = range.start; i <= range.end; i++) {
+        const ch = text[i];
+        if (i < range.end && ch === '{' && !escaped(text, i)) braces++;
+        else if (i < range.end && ch === '}' && !escaped(text, i) && braces > 0) braces--;
+        if (i !== range.end && (ch !== ',' || braces !== 0 || escaped(text, i))) continue;
+        const segment = text.slice(from, i);
+        const equal = segment.indexOf('=');
+        if (equal >= 0) {
+            const key = segment.slice(0, equal).trim();
+            let valueStart = from + equal + 1;
+            let valueEnd = i;
+            while (valueStart < valueEnd && /\s/.test(text[valueStart])) valueStart++;
+            while (valueEnd > valueStart && /\s/.test(text[valueEnd - 1])) valueEnd--;
+            result.push({ key, value: { start: valueStart, end: valueEnd }, rawValue: text.slice(valueStart, valueEnd), hasEquals: true });
+        } else {
+            const key = segment.trim();
+            if (key) result.push({ key, value: { start: i, end: i }, rawValue: '', hasEquals: false });
+        }
+        from = i + 1;
+    }
+    return result;
+}
+
+function fieldContent(text: string, field: { value: OffsetRange }): OffsetRange | undefined {
+    const { start, end } = field.value;
+    if (end <= start) return undefined;
+    if (text[start] === '{') {
+        const group = parseDelimited(text, start, '{', '}', end);
+        if (!group || group.close !== end - 1) return undefined;
+        return { start: group.start, end: group.end };
+    }
+    return field.value;
+}
+
 function parseEnvironmentName(text: string, commandEnd: number, limit: number): { name: string; end: number } | undefined {
     const start = skipTrivia(text, commandEnd, limit);
     const group = parseDelimited(text, start, '{', '}', limit);
@@ -134,15 +174,19 @@ function skipDefinition(text: string, commandEnd: number, limit: number): number
     return body ? body.close + 1 : undefined;
 }
 
-function parseOne(text: string, start: number, commandEnd: number, spec: Spec, issues: ParseIssue[], limit: number):
+function parseOne(text: string, start: number, commandEnd: number, spec: Spec, issues: ParseIssue[], limit: number, context: ScanContext):
     { change: LatexChange; next: number } | undefined {
     let i = skipTrivia(text, commandEnd, limit);
+    let optionalRange: OffsetRange | undefined;
+    let metadata: ReturnType<typeof optionalFields> = [];
     if (text[i] === '[') {
         const optional = parseOptional(text, i, limit);
         if (!optional) {
             issues.push({ start, end: limit, message: 'Unclosed optional argument for change command.' });
             return undefined;
         }
+        optionalRange = { start: i, end: optional.close + 1 };
+        metadata = optionalFields(text, { start: optional.start, end: optional.end });
         i = skipTrivia(text, optional.close + 1, limit);
     }
     const args: OffsetRange[] = [];
@@ -162,14 +206,26 @@ function parseOne(text: string, start: number, commandEnd: number, spec: Spec, i
     }
     const children: LatexChange[] = [];
     const childIssues: ParseIssue[] = [];
-    for (const arg of args) children.push(...scanRange(text, arg.start, arg.end, childIssues));
+    for (const arg of args) children.push(...scanRange(text, arg.start, arg.end, childIssues, context));
     issues.push(...childIssues);
     const change: LatexChange = { type: spec.type, start, end: i, args, children };
+    change.optionalRange = optionalRange;
+    const ids = metadata.filter(field => field.key === 'id');
+    if (ids.length === 1 && ids[0].hasEquals) change.authorId = ids[0].rawValue;
+    const commentFields = metadata.filter(field => field.key === 'comment');
+    if (commentFields.length === 1 && commentFields[0].hasEquals) {
+        const contentRange = fieldContent(text, commentFields[0]);
+        if (contentRange) {
+            const comment: LatexComment = { kind: 'attached', start, end: i, contentRange, anchorRange: { start, end: i }, optionalRange };
+            change.comment = comment;
+            context.comments.push(comment);
+        }
+    }
     if (childIssues.length) change.blocked = true;
     return { change, next: i };
 }
 
-function scanRange(text: string, from: number, to: number, issues: ParseIssue[]): LatexChange[] {
+function scanRange(text: string, from: number, to: number, issues: ParseIssue[], context: ScanContext): LatexChange[] {
     const changes: LatexChange[] = [];
     let i = from;
     while (i < to) {
@@ -214,10 +270,34 @@ function scanRange(text: string, from: number, to: number, issues: ParseIssue[])
         }
         const spec = REVIEW[command.name];
         if (spec) {
-            const parsed = parseOne(text, i, command.end, spec, issues, to);
+            const parsed = parseOne(text, i, command.end, spec, issues, to, context);
             if (!parsed) break;
             changes.push(parsed.change);
             i = parsed.next;
+            continue;
+        }
+        if (command.name === 'highlight' || command.name === 'comment') {
+            let argAt = skipTrivia(text, command.end, to);
+            let optionalRange: OffsetRange | undefined;
+            let metadata: ReturnType<typeof optionalFields> = [];
+            if (text[argAt] === '[') {
+                const opt = parseOptional(text, argAt, to);
+                if (!opt) { issues.push({ start: i, end: to, message: 'Unclosed optional argument for comment command.' }); break; }
+                optionalRange = { start: argAt, end: opt.close + 1 };
+                metadata = optionalFields(text, { start: opt.start, end: opt.end });
+                argAt = skipTrivia(text, opt.close + 1, to);
+            }
+            const arg = parseDelimited(text, argAt, '{', '}', to);
+            if (!arg) { i = command.end; continue; }
+            const commentFields = metadata.filter(field => field.key === 'comment');
+            if (command.name === 'comment') {
+                context.comments.push({ kind: 'standalone', start: i, end: arg.close + 1, contentRange: { start: arg.start, end: arg.end }, anchorRange: { start: arg.start, end: arg.end }, optionalRange });
+            } else if (commentFields.length === 1 && commentFields[0].hasEquals) {
+                const valueRange = fieldContent(text, commentFields[0]);
+                if (valueRange) context.comments.push({ kind: 'highlight', start: i, end: arg.close + 1, contentRange: valueRange, anchorRange: { start: arg.start, end: arg.end }, optionalRange });
+            }
+            changes.push(...scanRange(text, arg.start, arg.end, issues, context));
+            i = arg.close + 1;
             continue;
         }
         i = command.end;
@@ -227,7 +307,10 @@ function scanRange(text: string, from: number, to: number, issues: ParseIssue[])
 
 export function parseChanges(text: string): ParseResult {
     const issues: ParseIssue[] = [];
-    return { changes: scanRange(text, 0, text.length, issues), issues };
+    const context: ScanContext = { comments: [] };
+    const changes = scanRange(text, 0, text.length, issues, context);
+    context.comments.sort((a, b) => a.start - b.start);
+    return { changes, issues, comments: context.comments };
 }
 
 export function replacementText(text: string, change: LatexChange, decision: ReviewDecision): string {

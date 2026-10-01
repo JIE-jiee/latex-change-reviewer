@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { LatexChange } from './changeTypes';
 import type { ReviewTarget } from './reviewController';
 import { t } from './i18n';
+import { f } from './featureStrings';
 
 export function decisionHint(change: LatexChange, decision: 'accept' | 'reject'): string {
   const suffix = change.type[0].toUpperCase() + change.type.slice(1);
@@ -22,6 +23,7 @@ interface ReviewViewState {
   index: number;
   count: number;
   issues: number;
+  comments: number;
 }
 
 function gutterArrow(fill: string): vscode.Uri {
@@ -96,8 +98,9 @@ export class ReviewUi implements vscode.Disposable {
     if (state.current) this.button('current', `$(target) ${t('currentInfo', t(state.current.type), state.index, state.count)}`,
       `${state.editor?.document.fileName}\n${t('locateCurrent')}`, state.busy ? undefined : locate);
     const countText = state.pending ? t('waiting') : state.issues ? t('errors', state.count, state.issues)
-      : state.count ? t('remaining', state.count) : t('clean');
-    this.button('remaining', `$(list-unordered) ${countText}`, t('locateCurrent'),
+      : state.count || state.comments ? t('remaining', state.count) : t('clean');
+    const commentText = state.comments ? ` · $(comment) ${f('commentCount', state.comments)}` : '';
+    this.button('remaining', `$(list-unordered) ${countText}${commentText}`, t('locateCurrent'),
       !state.busy && state.count ? locate : undefined);
   }
 

@@ -24,13 +24,14 @@ async function main(): Promise<number> {
     `--user-data-dir=${userDataDir}`, `--extensions-dir=${extensionsDir}`,
     `--crash-reporter-directory=${path.join(cacheRoot, 'crashes')}`,
     '--disable-updates', '--skip-welcome', '--skip-release-notes', '--disable-workspace-trust',
-    '--disable-gpu', '--disable-telemetry', '--new-window',
+    '--disable-gpu', '--disable-telemetry', '--disable-extensions', '--new-window',
     `--extensionTestsPath=${path.join(projectRoot, 'dist', 'tests', 'integration.js')}`
   ];
   // VS Code runs extensionTestsPath only in an extension development host.
   // In package mode point that host at the installed VSIX, never the source tree.
   const version = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8')).version;
-  const installed = packaged ? fs.readdirSync(extensionsDir).find(name => name === `local-latex-tools.latex-change-reviewer-${version}`) : undefined;
+  const publisher = process.env.REVIEW_PUBLISHER ?? 'local-latex-tools';
+  const installed = packaged ? fs.readdirSync(extensionsDir).find(name => name.toLowerCase() === `${publisher}.latex-change-reviewer-${version}`.toLowerCase()) : undefined;
   if (packaged && !installed) throw new Error('Install the VSIX into .cache/vscode/extensions before packaged tests.');
   args.push(`--extensionDevelopmentPath=${packaged ? path.join(extensionsDir, installed!) : projectRoot}`);
   const env: NodeJS.ProcessEnv = { ...process.env, REVIEW_PACKAGED: packaged ? '1' : '0' };
@@ -42,7 +43,7 @@ async function main(): Promise<number> {
     const collect = (data: Buffer) => {
       const lines = data.toString().split(/\r?\n/).filter(Boolean);
       tail.push(...lines); if (tail.length > 100) tail.splice(0, tail.length - 100);
-      for (const line of lines) if (/LaTeX Change Reviewer integration checks passed/.test(line)) console.log(line);
+      for (const line of lines) if (/LaTeX Change Reviewer integration checks passed|Recording benchmark:/.test(line)) console.log(line);
     };
     child.stdout!.on('data', collect); child.stderr!.on('data', collect);
     child.once('error', reject);

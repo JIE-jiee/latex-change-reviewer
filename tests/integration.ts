@@ -2,8 +2,9 @@ import * as assert from 'node:assert/strict';
 import * as vscode from 'vscode';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { runRecordingTests } from './recordingIntegration';
 
-const extensionId = 'local-latex-tools.latex-change-reviewer';
+const extensionId = `${process.env.REVIEW_PUBLISHER ?? 'local-latex-tools'}.latex-change-reviewer`;
 const acceptCommand = 'latexReview.acceptCurrent';
 const rejectCommand = 'latexReview.rejectCurrent';
 const toggleCommand = 'latexReview.toggleReview';
@@ -16,7 +17,13 @@ async function activateExtension(): Promise<void> {
 
 async function openLatex(source: string): Promise<vscode.TextEditor> {
   const document = await vscode.workspace.openTextDocument({ language: 'latex', content: source });
-  return vscode.window.showTextDocument(document, { preview: false });
+  const editor = await vscode.window.showTextDocument(document, { preview: false });
+  // Older hosts can resolve showTextDocument before active-editor state reaches the extension host.
+  for (let attempt = 0; attempt < 50 && vscode.window.activeTextEditor?.document !== document; attempt++) {
+    await new Promise(resolve => setTimeout(resolve, 20));
+  }
+  assert.equal(vscode.window.activeTextEditor?.document, document, 'The test document must be active before cursor commands.');
+  return editor;
 }
 
 async function codeLenses(document: vscode.TextDocument): Promise<vscode.CodeLens[]> {
@@ -217,5 +224,6 @@ export async function run(): Promise<void> {
     await runDevelopmentTests();
   }
   await runBehaviorTests();
+  await runRecordingTests();
   console.log('LaTeX Change Reviewer integration checks passed.');
 }

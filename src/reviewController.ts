@@ -22,7 +22,11 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
   private disposed = false;
   private updateSequence = 0;
 
-  constructor(private readonly context: vscode.ExtensionContext) {
+  constructor(private readonly context: vscode.ExtensionContext, private readonly hooks?: {
+    beforeAction: (editor: vscode.TextEditor) => Promise<boolean>;
+    edit: (editor: vscode.TextEditor, range: vscode.Range, text: string) => Promise<boolean>;
+    onReviewChanged?: () => void;
+  }) {
     this.enabled = context.workspaceState.get('latexReview.enabled', false);
     this.disposables.push(this.changed, this.ui, this.diagnostics,
       vscode.languages.registerCodeLensProvider([{ language: 'latex' }, { pattern: '**/*.tex' }], this),
@@ -112,7 +116,9 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
     });
   }
 
-  private async writable(document: vscode.TextDocument): Promise<boolean> {
+  isEnabled(): boolean { return this.enabled; }
+
+  async writable(document: vscode.TextDocument): Promise<boolean> {
     if (document.isClosed) return false;
     if (document.uri.scheme === 'untitled') return true;
     if (vscode.workspace.fs.isWritableFileSystem(document.uri.scheme) !== true) return false;
@@ -124,7 +130,7 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
     } catch { return false; }
   }
 
-  private refresh(): void {
+  refresh(): void {
     if (this.disposed) return;
     if (!this.enabled) this.diagnostics.clear();
     else {
@@ -169,7 +175,7 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
       current, target: current && editor ? this.target(editor.document, current) : undefined,
       previous: previous && editor ? this.target(editor.document, previous) : undefined,
       next: next && editor ? this.target(editor.document, next) : undefined,
-      index: current ? changes.indexOf(current) + 1 : 0, count: changes.length, issues: result?.issues.length ?? 0 });
+      index: current ? changes.indexOf(current) + 1 : 0, count: changes.length, issues: result?.issues.length ?? 0, comments: result?.comments.length ?? 0 });
   }
 
   private async toggle(): Promise<void> {
@@ -177,6 +183,7 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
     this.enabled = !this.enabled;
     await this.context.workspaceState.update('latexReview.enabled', this.enabled);
     this.refresh();
+    this.hooks?.onReviewChanged?.();
     if (this.enabled) await this.locate();
   }
 
@@ -220,6 +227,7 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
   }
 
   private async locate(target?: ReviewTarget): Promise<void> {
+    if (target instanceof vscode.Uri) target = undefined;
     if (!this.enabled || this.busy) return;
     const editor = await this.resolveEditor(target);
     if (!editor || !this.supported(editor.document)) return;
@@ -231,9 +239,11 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
   }
 
   private async navigate(direction: 1 | -1, target?: ReviewTarget): Promise<void> {
+    if (target instanceof vscode.Uri) target = undefined;
     if (!this.enabled || this.busy) return;
     const editor = await this.resolveEditor(target);
     if (!editor || !this.supported(editor.document)) return;
+    if (this.hooks && !await this.hooks.beforeAction(editor)) return;
     if (target && !this.validatedTarget(editor.document, target)) { this.refresh(); return; }
     const offset = target?.start ?? editor.document.offsetAt(editor.selection.active);
     const next = adjacentChange(this.snapshot(editor.document).changes.filter(change => !change.blocked), offset, direction);
@@ -242,12 +252,14 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
   }
 
   private async apply(decision: 'accept' | 'reject', target?: ReviewTarget): Promise<void> {
+    if (target instanceof vscode.Uri) target = undefined;
     if (!this.enabled || this.busy) return;
     this.busy = true;
     void vscode.commands.executeCommand('setContext', 'latexReview.busy', true);
     try {
       const editor = await this.resolveEditor(target);
       if (!editor || !this.supported(editor.document)) return;
+      if (this.hooks && !await this.hooks.beforeAction(editor)) return;
       const document = editor.document;
       const change = target ? this.validatedTarget(document, target)
         : currentChange(this.snapshot(document).changes.filter(change => !change.blocked), document.offsetAt(editor.selection.active));
@@ -261,8 +273,9 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
       const replacement = replacementText(text, change, decision);
       const boundary = text.slice(0, change.start) + replacement;
       const glue = /\\[A-Za-z]+$/.test(boundary) && /^[A-Za-z]/.test(text.slice(change.end));
-      const success = await editor.edit(builder => builder.replace(this.range(document, change), replacement),
-        { undoStopBefore: true, undoStopAfter: true });
+      const success = this.hooks ? await this.hooks.edit(editor, this.range(document, change), replacement)
+        : await editor.edit(builder => builder.replace(this.range(document, change), replacement),
+          { undoStopBefore: true, undoStopAfter: true });
       if (!success) { void vscode.window.showWarningMessage(t('readonly')); return; }
       if (glue) void vscode.window.showWarningMessage(t('glue'));
       const updated = this.snapshot(document);

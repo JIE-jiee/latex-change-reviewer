@@ -3,7 +3,7 @@
   "displayName": "%displayName%",
   "description": "%description%",
   "publisher": "local-latex-tools",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "engines": {
     "vscode": "^1.85.2"
   },
@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "compile": "tsc -p .",
-    "test": "npm run compile && node --test dist/tests/parser.test.js dist/tests/navigation.test.js",
+    "test": "npm run compile && node --test dist/tests/parser.test.js dist/tests/navigation.test.js dist/tests/changeTransforms.test.js dist/tests/comments.test.js",
     "package": "npm run compile && node scripts/package.cjs",
     "test:integration": "npm run compile && node dist/tests/runIntegration.js",
     "package:marketplace": "npm run compile && node scripts/package.cjs --marketplace"
@@ -70,6 +70,81 @@
       {
         "command": "latexReview.selectLanguage",
         "title": "%command.selectLanguage%"
+      },
+      {
+        "command": "latexReview.addComment",
+        "title": "%command.addComment%",
+        "enablement": "latexReview.supported && !editorReadonly && latexReview.enabled && latexReview.writable"
+      },
+      {
+        "command": "latexReview.editComment",
+        "title": "%command.editComment%",
+        "enablement": "latexReview.supported && latexReview.enabled && latexReview.writable && !editorReadonly"
+      },
+      {
+        "command": "latexReview.removeComment",
+        "title": "%command.removeComment%",
+        "enablement": "latexReview.supported && latexReview.enabled && latexReview.writable && !editorReadonly"
+      },
+      {
+        "command": "latexReview.nextComment",
+        "title": "%command.nextComment%",
+        "enablement": "latexReview.supported && latexReview.enabled"
+      },
+      {
+        "command": "latexReview.toggleTracking",
+        "title": "%command.toggleTracking%",
+        "icon": "$(edit)",
+        "enablement": "latexReview.supported && !editorReadonly"
+      },
+      {
+        "command": "latexReview.markAddition",
+        "title": "%command.markAddition%",
+        "enablement": "latexReview.supported && latexReview.tracking && !latexReview.trackingPaused && !editorReadonly"
+      },
+      {
+        "command": "latexReview.markDeletion",
+        "title": "%command.markDeletion%",
+        "enablement": "latexReview.supported && latexReview.tracking && !latexReview.trackingPaused && !editorReadonly"
+      },
+      {
+        "command": "latexReview.replaceWithRevision",
+        "title": "%command.replaceWithRevision%",
+        "enablement": "latexReview.supported && latexReview.tracking && !latexReview.trackingPaused && !editorReadonly"
+      },
+      {
+        "command": "latexReview.mergeSelectedChanges",
+        "title": "%command.mergeSelectedChanges%",
+        "enablement": "latexReview.supported && latexReview.tracking && !latexReview.trackingPaused && !editorReadonly"
+      },
+      {
+        "command": "latexReview.showTrackingDiff",
+        "title": "%command.showTrackingDiff%",
+        "enablement": "latexReview.supported && latexReview.trackingPaused"
+      },
+      {
+        "command": "latexReview.saveComment",
+        "title": "%command.saveComment%"
+      },
+      {
+        "command": "latexReview.cancelComment",
+        "title": "%command.cancelComment%"
+      },
+      {
+        "command": "latexReview.trackingDeleteLeft",
+        "title": "%command.trackingDeleteLeft%"
+      },
+      {
+        "command": "latexReview.trackingDeleteRight",
+        "title": "%command.trackingDeleteRight%"
+      },
+      {
+        "command": "latexReview.trackingPaste",
+        "title": "%command.trackingPaste%"
+      },
+      {
+        "command": "latexReview.trackingCut",
+        "title": "%command.trackingCut%"
       }
     ],
     "menus": {
@@ -104,6 +179,70 @@
         {
           "command": "latexReview.locateCurrent",
           "when": "latexReview.supported && latexReview.enabled && !latexReview.busy"
+        },
+        {
+          "command": "latexReview.addComment",
+          "when": "latexReview.supported && latexReview.enabled && latexReview.writable"
+        },
+        {
+          "command": "latexReview.editComment",
+          "when": "latexReview.supported && latexReview.enabled"
+        },
+        {
+          "command": "latexReview.removeComment",
+          "when": "latexReview.supported && latexReview.enabled"
+        },
+        {
+          "command": "latexReview.nextComment",
+          "when": "latexReview.supported && latexReview.enabled"
+        },
+        {
+          "command": "latexReview.toggleTracking",
+          "when": "latexReview.supported && !editorReadonly"
+        },
+        {
+          "command": "latexReview.markAddition",
+          "when": "latexReview.tracking && !latexReview.trackingPaused && editorTextFocus"
+        },
+        {
+          "command": "latexReview.markDeletion",
+          "when": "latexReview.tracking && !latexReview.trackingPaused && editorTextFocus"
+        },
+        {
+          "command": "latexReview.replaceWithRevision",
+          "when": "latexReview.tracking && !latexReview.trackingPaused && editorTextFocus"
+        },
+        {
+          "command": "latexReview.mergeSelectedChanges",
+          "when": "latexReview.tracking && !latexReview.trackingPaused && editorTextFocus"
+        },
+        {
+          "command": "latexReview.showTrackingDiff",
+          "when": "latexReview.trackingPaused"
+        },
+        {
+          "command": "latexReview.saveComment",
+          "when": "false"
+        },
+        {
+          "command": "latexReview.cancelComment",
+          "when": "false"
+        },
+        {
+          "command": "latexReview.trackingDeleteLeft",
+          "when": "false"
+        },
+        {
+          "command": "latexReview.trackingDeleteRight",
+          "when": "false"
+        },
+        {
+          "command": "latexReview.trackingPaste",
+          "when": "false"
+        },
+        {
+          "command": "latexReview.trackingCut",
+          "when": "false"
         }
       ],
       "editor/context": [
@@ -126,6 +265,36 @@
           "command": "latexReview.nextChange",
           "when": "latexReview.supported && latexReview.enabled && !latexReview.busy && editorTextFocus",
           "group": "navigation@13"
+        },
+        {
+          "command": "latexReview.addComment",
+          "when": "latexReview.supported && editorTextFocus && latexReview.enabled && latexReview.writable",
+          "group": "navigation@20"
+        },
+        {
+          "command": "latexReview.editComment",
+          "when": "latexReview.supported && latexReview.enabled && latexReview.hasComment && editorTextFocus",
+          "group": "navigation@21"
+        },
+        {
+          "command": "latexReview.removeComment",
+          "when": "latexReview.supported && latexReview.enabled && latexReview.hasComment && editorTextFocus",
+          "group": "navigation@22"
+        },
+        {
+          "command": "latexReview.nextComment",
+          "when": "latexReview.supported && latexReview.enabled && latexReview.hasComments && editorTextFocus",
+          "group": "navigation@23"
+        }
+      ],
+      "comments/commentThread/title": [
+        {
+          "command": "latexReview.editComment",
+          "when": "commentThread == latexReviewComment && latexReview.enabled"
+        },
+        {
+          "command": "latexReview.removeComment",
+          "when": "commentThread == latexReviewComment && latexReview.enabled"
         }
       ],
       "editor/title": [
@@ -133,10 +302,57 @@
           "command": "latexReview.toggleReview",
           "when": "latexReview.supported",
           "group": "navigation@80"
+        },
+        {
+          "command": "latexReview.toggleTracking",
+          "when": "latexReview.supported && !editorReadonly",
+          "group": "navigation@81"
+        }
+      ],
+      "comments/comment/context": [
+        {
+          "command": "latexReview.saveComment",
+          "when": "commentThread == latexReviewDraftComment && comment == latexReviewComment",
+          "group": "navigation@1"
+        },
+        {
+          "command": "latexReview.cancelComment",
+          "when": "commentThread == latexReviewDraftComment && comment == latexReviewComment",
+          "group": "navigation@2"
         }
       ]
     },
     "keybindings": [
+      {
+        "command": "latexReview.trackingDeleteLeft",
+        "key": "backspace",
+        "when": "latexReview.tracking && editorTextFocus && !isComposing && !editorReadonly && !latexReview.trackingPaused && !editorSimpleInput"
+      },
+      {
+        "command": "latexReview.trackingDeleteRight",
+        "key": "delete",
+        "when": "latexReview.tracking && editorTextFocus && !isComposing && !editorReadonly && !latexReview.trackingPaused && !editorSimpleInput"
+      },
+      {
+        "command": "latexReview.trackingPaste",
+        "key": "ctrl+v",
+        "when": "latexReview.tracking && editorTextFocus && !isComposing && !editorReadonly && !latexReview.trackingPaused && !editorSimpleInput"
+      },
+      {
+        "command": "latexReview.trackingPaste",
+        "key": "cmd+v",
+        "when": "latexReview.tracking && editorTextFocus && !isComposing && !editorReadonly && !latexReview.trackingPaused && !editorSimpleInput"
+      },
+      {
+        "command": "latexReview.trackingCut",
+        "key": "ctrl+x",
+        "when": "latexReview.tracking && editorTextFocus && !isComposing && !editorReadonly && !latexReview.trackingPaused && !editorSimpleInput"
+      },
+      {
+        "command": "latexReview.trackingCut",
+        "key": "cmd+x",
+        "when": "latexReview.tracking && editorTextFocus && !isComposing && !editorReadonly && !latexReview.trackingPaused && !editorSimpleInput"
+      },
       {
         "command": "latexReview.acceptCurrent",
         "key": "ctrl+k alt+a",
@@ -196,6 +412,11 @@
           "type": "boolean",
           "default": true,
           "description": "%configuration.enableDefaultKeybindings%"
+        },
+        "latexReview.authorId": {
+          "type": "string",
+          "default": "",
+          "description": "%configuration.authorId%"
         }
       }
     }
@@ -215,6 +436,7 @@
     "changes",
     "review",
     "track changes",
+    "comments",
     "accept",
     "reject"
   ],

@@ -2,8 +2,8 @@
   "name": "latex-change-reviewer",
   "displayName": "LaTeX Change Reviewer",
   "publisher": "Unfinished-draft",
-  "version": "0.2.2",
-  "description": "让 LaTeX 审阅更方便的 VS Code 插件：对照新旧文字，用鼠标逐条接受或拒绝修订，支持中英日界面。",
+  "version": "0.3.0",
+  "description": "在 VS Code 中记录 LaTeX 增删改、添加批注，对照新旧文字并逐条接受或拒绝修订。支持中英日界面。",
   "pricing": "Free",
   "license": "MIT",
   "icon": "../icon.png",
@@ -18,10 +18,11 @@
     "changes",
     "review",
     "track changes",
+    "comments",
     "accept",
     "reject"
   ],
-  "publicationStatus": "0.2.1 published; 0.2.2 documentation update prepared",
+  "publicationStatus": "0.2.2 published; 0.3.0 verifying",
   "publisherDisplayName": "Unfinished draft",
   "marketplace": "https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer"
 }
