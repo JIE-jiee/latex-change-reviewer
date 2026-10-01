@@ -1,6 +1,6 @@
 {
   "displayName": "LaTeX Change Reviewer",
-  "description": "Record LaTeX edits, add comments, and accept or reject changes one at a time in VS Code.",
+  "description": "Word-style track changes and comments for LaTeX in VS Code: edit normally, then accept or reject changes one at a time.",
   "configuration.title": "LaTeX Review",
   "configuration.uiLanguage": "Language used for dynamic review controls. Auto follows the VS Code display language.",
   "configuration.autoGoToNext": "Move to the next change after accepting or rejecting the current change.",

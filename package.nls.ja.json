@@ -1,6 +1,6 @@
 {
   "displayName": "LaTeX 変更レビュー",
-  "description": "VS Code で LaTeX の変更を記録し、コメントを追加。新旧の文章を比較して変更を一件ずつ承認・却下できます。",
+  "description": "Word に慣れた操作で LaTeX をレビュー。VS Code で本文を編集して変更とコメントを残し、一件ずつ承認・却下できます。",
   "configuration.title": "LaTeX レビュー",
   "configuration.uiLanguage": "レビュー操作に使用する言語です。自動では VS Code の表示言語に従います。",
   "configuration.autoGoToNext": "現在の変更を承認または却下した後、次の変更へ移動します。",

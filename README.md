@@ -1,18 +1,28 @@
 # LaTeX Change Reviewer — VS Code 的 LaTeX 审阅插件
 
-**在 VS Code 里，一条一条看清修订，再点击接受或拒绝。**
+**像 Word 一样提出修改、留下批注，在 VS Code 里逐条接受或拒绝 LaTeX 修订。**
 
-LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅 LaTeX 文档中的文本修改。如果你或合作者使用 `\added`、`\deleted`、`\replaced` 标记新增、删除和替换，它可以把这些标记变成可点击的审阅操作。
+LaTeX Change Reviewer 是一个 **VS Code 插件**。写作者开启“记录修订”，直接改正文，插件自动留下新增、删除和替换标记；审阅者开启“审阅工具”，对照新旧文字，点击接受或拒绝，再看下一条。选中文字后右键即可添加批注，给合作者说明修改理由。
 
-你可以先对照新旧文字，再决定是否保留修改。点击后，插件会直接更新 .tex 源码，默认带你进入下一条修订。整个过程都在熟悉的 VS Code 编辑器中完成。
+它把熟悉的 **“修改并留痕 → 批注说明 → 逐条确认”** 流程带到 LaTeX 源码编辑器。你不必为普通正文修改手写修订命令，也不必在接受修改时逐一拆掉包装。修订和批注都留在 `.tex` 中，已有的 changes 文稿也能继续使用。
 
 **推荐直接在 VS Code 扩展面板搜索安装。** 已上架 [VS Code 扩展市场](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer)，可直接搜索 LaTeX Change Reviewer 安装。发布者：Unfinished draft。
 
-## 0.3.0 新增记录修订与批注
+## 0.3.0：像平常一样修改，再像 Word 一样逐条审阅
 
-现在可以在 VS Code 的 LaTeX 源码中直接编辑，并把新增、删除和替换记录为 `\added{新文字}`、`\deleted{旧文字}`、`\replaced{新文字}{旧文字}`。连续输入会归入同一处修订；在新增文字或替换的新文本中继续修改，也会更新原有修订。
+### 直接编辑，修改自动留下记录
 
-左下角有两个独立开关：**审阅工具**用于查看、接受、拒绝和导航已有修订，也可处理批注；**记录修订**用于把当前文件中的编辑记为修订。关闭一个不会影响另一个。审阅工具会记住工作区状态；记录修订仅对当前文件和本次会话有效，默认关闭。
+打开**记录修订**后，照常在 `.tex` 源码里输入、删除、粘贴或替换文字，插件会把这些编辑记为 LaTeX 修订。你不需要自己输入或整理 `\added`、`\deleted`、`\replaced` 命令；也可以给选中文字或修订添加批注。
+
+![直接编辑留下修订](media/screenshots/recording.gif)
+
+### 对照修订，逐条决定接受或拒绝
+
+打开**审阅工具**后，可查看每条修订，点击**接受**或**拒绝**，再继续到下一条；也可以添加、阅读和管理批注。操作方式接近 Word 的逐条审阅流程，决定会直接更新 `.tex` 源码，点错可用 `Ctrl+Z` 撤销。
+
+![右键批注](media/screenshots/comments.jpg)
+
+两个开关彼此独立：**审阅工具**显示查看、接受、拒绝、导航和批注操作；**记录修订**把当前文件之后的编辑记为修订。关闭一个不会影响另一个。审阅工具会记住工作区状态；记录修订仅对当前文件和本次会话有效，默认关闭。
 
 要记录修改，打开 `.tex` 文件，点击左下角的**记录修订**即可开启；再次点击即可关闭。添加批注时先开启**审阅工具**，然后在正文中右键操作。
 
@@ -121,7 +131,7 @@ LaTeX Change Reviewer 是一个 **VS Code 插件**，帮助你更方便地审阅
 
 ## English quick start
 
-**LaTeX Change Reviewer is a VS Code extension for reviewing LaTeX edits one at a time.** Read the old and new text, then click Accept or Reject in the editor or the fixed status bar. Each decision updates your source and moves to the next change by default.
+**Word-style revision recording and comments for LaTeX, inside VS Code.** Edit your source normally to leave tracked changes, add a comment to explain your suggestion, then review each change with Accept, Reject, and Next. The extension generates standard changes macros and keeps your edits in the `.tex` file.
 
 Install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer), or search **LaTeX Change Reviewer** in Extensions and choose publisher **Unfinished draft**. Open a .tex file and click the checklist icon to start reviewing. For offline installation, use the `-marketplace.vsix` file from [Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases/latest). The extension is free to use under the MIT license; the source is public on GitHub. Use `\replaced{new}{old}`. Ctrl+Z undoes each decision. Choose **Select Interface Language** to switch languages.
 
@@ -135,7 +145,7 @@ Known limits: switching system input methods before composition finishes may pau
 
 ## 日本語クイックスタート
 
-**LaTeX Change Reviewer は、LaTeX の修正を一件ずつ確認するための VS Code 拡張機能です。** 新旧の文章を見比べ、エディター内またはステータスバーの「承認」「却下」をクリックすると、ソースが更新され、既定では次の変更へ移動します。
+**Word に慣れた変更記録とコメントの流れを、VS Code の LaTeX 編集で。** 本文を直接編集して修正を残し、コメントで意見を伝え、新旧の文章を見比べて「承認」「却下」「次へ」で一件ずつ確認できます。修正とコメントは標準的な changes コマンドとして `.tex` に保存されます。
 
 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer) からインストールできます。拡張機能で **LaTeX Change Reviewer** を検索し、発行者 **Unfinished draft** を選んでください。オフラインの場合は [Releases](https://github.com/JIE-jiee/latex-change-reviewer/releases/latest) の `-marketplace.vsix` を使用できます。.tex を開き、チェックリストアイコンでレビューを開始してください。MIT ライセンスで無料で利用でき、ソースは GitHub で公開されています。`\replaced{新しい文}{元の文}` の順で指定します。Ctrl+Z で操作ごとに元に戻せます。表示言語は言語選択コマンドから切り替えられます。
 

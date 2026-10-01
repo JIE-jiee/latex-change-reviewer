@@ -4,7 +4,14 @@
 </blockquote>
 <h2>中文</h2>
 <h3>在 VS Code 里逐条审阅 LaTeX 修改</h3>
-<p>LaTeX Change Reviewer 是一个 VS Code 插件，帮你在 <code>.tex</code> 源码中逐条检查新增、删除和替换。对照新旧文本后，点击<strong>接受</strong>或<strong>拒绝</strong>，决定会直接写入编辑器；默认随后定位到下一条。点错可用 <code>Ctrl+Z</code> 撤销。</p><p>0.3.0 功能还加入可选的修订记录与单条批注。<strong>审阅开关</strong>控制修订标记和接受／拒绝工具；<strong>记录修订</strong>独立控制是否把之后的编辑记成修订，两者可分别开关。记录默认关闭，按文件、仅在本次会话启用；只影响开启后的编辑，不追溯已有文字。</p><p>记录时，常规输入、删除、粘贴和剪切可成为修订。新输入记为新增，删除原有文字记为删除；选中新旧文字后键入或粘贴，会记为 <code>\\replaced{新}{旧}</code>。同一处已有修订时继续编辑会更新其记录，不会在修订里面再套一层。每条修订可附一条批注：添加或编辑会覆盖该条的批注，删除会清除批注；批注保存在修订参数中，可用 Ctrl+Z 撤销／重做。</p><p>记录修订不自动保存，文档仍由你保存。输入法组合期间由 VS Code 原生处理，组合结束后再转换为修订；无法可靠识别的外部编辑会保留原结果并暂停记录。快速切换输入法时若组合尚未完成，也可能暂停记录；完成或取消组合后再切换。其他会接管输入的扩展尚未兼容验证。</p>
+<p>LaTeX Change Reviewer 是一个 VS Code 插件，让你直接在 <code>.tex</code> 源码里编辑并逐条审阅修改。0.3.0 有两个重点：像平常一样编辑，新增、删除和替换会自动记为 LaTeX 修订；再用熟悉的 Word 式流程逐条接受或拒绝，并前往下一条。无需手动输入修订命令，操作也可用 <code>Ctrl+Z</code> 撤销。</p>
+<h3>直接编辑，修改自动留下记录</h3>
+<p>开启<strong>记录修订</strong>后，照常输入、删除、粘贴或替换文字，插件会记录对应修改。还可以为选中文字或修订添加批注。记录默认关闭，只对当前文件和本次会话生效。</p>
+<p><img src="../screenshots/recording.gif" alt="直接编辑留下修订"></p>
+<h3>对照修订，逐条决定接受或拒绝</h3>
+<p>开启<strong>审阅工具</strong>后，查看每条修订，点击<strong>接受</strong>或<strong>拒绝</strong>，再继续到下一条。也可以阅读、添加和管理批注。操作顺序贴近 Word 中逐条处理修订的习惯，决定会直接更新 <code>.tex</code> 源码。</p>
+<p><img src="../screenshots/comments.jpg" alt="右键批注"></p>
+<p><strong>审阅工具</strong>与<strong>记录修订</strong>是两个独立开关：一个控制查看和处理现有修订，另一个控制是否记录之后的编辑。关闭一个不会影响另一个；已有文字也不会追溯记录。</p><p>记录时，常规输入、删除、粘贴和剪切可成为修订。新输入记为新增，删除原有文字记为删除；选中新旧文字后键入或粘贴，会记为 <code>\\replaced{新}{旧}</code>。同一处已有修订时继续编辑会更新其记录，不会在修订里面再套一层。每条修订可附一条批注：添加或编辑会覆盖该条的批注，删除会清除批注；批注保存在修订参数中，可用 Ctrl+Z 撤销／重做。</p><p>记录修订不自动保存，文档仍由你保存。输入法组合期间由 VS Code 原生处理，组合结束后再转换为修订；无法可靠识别的外部编辑会保留原结果并暂停记录。快速切换输入法时若组合尚未完成，也可能暂停记录；完成或取消组合后再切换。其他会接管输入的扩展尚未兼容验证。</p>
 <p>插件提供清晰的当前修订标记、编辑器内按钮和固定操作条，也可用命令面板、右键菜单或辅助快捷键审阅。支持简体中文、English、日本語界面。</p>
 <p>同一条源码行有多处修订时，按钮会用 <code>[1]</code>、<code>[2]</code> 等编号区分各自的目标，按该行中出现的顺序排列。点击 <code>[1] 接受</code> 处理第一处，点击 <code>[2] 拒绝</code> 处理第二处；各组“下一条”从对应修订向后导航。自动折行仍算同一条源码行。编号是界面提示，不写入文稿，处理修订后会重新排列。</p>
 <p><img src="../screenshots/review.jpg" alt="当前修订的审阅界面"></p>
@@ -27,7 +34,7 @@
 </ul>
 <p>插件免费使用，采用 MIT 许可。源码和问题反馈见 <a href="https://github.com/JIE-jiee/latex-change-reviewer">GitHub</a>。可从 <a href="https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer">VS Code 扩展市场</a> 直接安装。离线安装请选择 GitHub Releases 中带 <code>-marketplace.vsix</code> 的正式安装包。</p>
 <h2>English</h2>
-<p>Review LaTeX edits one at a time in VS Code. Compare the old and new text, then click <strong>Accept</strong> or <strong>Reject</strong>. Each decision updates the open source file and moves to the next change by default. Use <code>Ctrl+Z</code> to undo. Install directly in VS Code: search LaTeX Change Reviewer in Extensions and choose publisher Unfinished draft. Supports standard <code>\added</code>, <code>\deleted</code>, and <code>\replaced{new}{old}</code> changes commands. Available now on the VS Code Marketplace. Windows desktop support has been verified; Web, Remote, and other operating systems have not.</p>
+<p>LaTeX Change Reviewer is a VS Code extension with two ways to work: edit LaTeX normally and let the extension record additions, deletions, replacements, and comments; then review each change in a familiar Word-style flow—Accept or Reject, then move to the next. You do not need to type change macros yourself. Recording is off by default; the review and recording switches work independently. Install in VS Code by searching for LaTeX Change Reviewer and choosing publisher Unfinished draft. Windows desktop support has been verified; Web, Remote, and other operating systems have not.</p>
 <h2>日本語</h2>
-<p>VS Code で LaTeX の変更を一件ずつ確認できます。新旧の文章を見比べて<strong>承認</strong>または<strong>却下</strong>をクリックすると、開いているソースが更新され、既定では次の変更へ移動します。<code>Ctrl+Z</code> で元に戻せます。VS Code の拡張機能で LaTeX Change Reviewer を検索し、発行者 Unfinished draft を選んでインストールしてください。標準的な <code>\added</code>、<code>\deleted</code>、<code>\replaced{新しい文}{元の文}</code> に対応します。VS Code Marketplace で公開されています。Windows デスクトップ版で動作確認済みです。Web、Remote、その他の OS は未検証です。</p>
+<p>LaTeX Change Reviewer は、LaTeX の編集と修正確認を支援する VS Code 拡張機能です。通常どおりソースを編集すると追加・削除・置換を記録し、コメントも付けられます。その後、Word に慣れた流れで一件ずつ修正を確認し、承認または却下して次へ進めます。変更コマンドを自分で入力する必要はありません。記録は既定でオフで、レビューと記録のスイッチは独立しています。VS Code の拡張機能で LaTeX Change Reviewer を検索し、発行者 Unfinished draft を選んでインストールしてください。Windows デスクトップ版で動作確認済みです。Web、Remote、その他の OS は未検証です。</p>
 </main></html>

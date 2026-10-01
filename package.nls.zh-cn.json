@@ -1,6 +1,6 @@
 {
   "displayName": "LaTeX 修订审阅器",
-  "description": "在 VS Code 中记录 LaTeX 增删改、添加批注，对照新旧文字并逐条接受或拒绝修订。",
+  "description": "在 VS Code 中按熟悉的 Word 审阅流程修改 LaTeX：直接编辑正文、留下修订和批注，再逐条接受或拒绝。",
   "configuration.title": "LaTeX 修订审阅",
   "configuration.uiLanguage": "动态审阅控件使用的语言。自动模式跟随 VS Code 界面语言。",
   "configuration.autoGoToNext": "接受或拒绝当前修订后，自动移动到下一条。",
