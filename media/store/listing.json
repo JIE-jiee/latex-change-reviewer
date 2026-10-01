@@ -24,7 +24,7 @@
     "accept",
     "reject"
   ],
-  "publicationStatus": "0.3.0 published; 0.3.1 prepared",
+  "publicationStatus": "0.3.0 published; 0.3.1 verifying",
   "publisherDisplayName": "Unfinished draft",
   "marketplace": "https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer"
 }
