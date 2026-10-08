@@ -2,7 +2,7 @@
   "name": "latex-change-reviewer",
   "displayName": "LaTeX Change Reviewer",
   "publisher": "Unfinished-draft",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "VS Code 的 LaTeX 修订与批注插件：像 Word 一样直接改正文、留下修订和批注，再逐条接受或拒绝。支持中英日界面。",
   "pricing": "Free",
   "license": "MIT",
@@ -24,7 +24,7 @@
     "accept",
     "reject"
   ],
-  "publicationStatus": "0.3.0 published; 0.3.1 verifying",
+  "publicationStatus": "0.3.1 published; 0.3.2 verifying",
   "publisherDisplayName": "Unfinished draft",
   "marketplace": "https://marketplace.visualstudio.com/items?itemName=Unfinished-draft.latex-change-reviewer"
 }
