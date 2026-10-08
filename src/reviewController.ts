@@ -8,6 +8,7 @@ import { decisionHint, ReviewUi } from './reviewUi';
 
 interface Snapshot extends ParseResult { version: number }
 export interface ReviewTarget { uri: string; version: number; start: number; end: number; source: string }
+export interface ParseIssueTarget { uri: string; version: number; start: number }
 
 export class ReviewController implements vscode.Disposable, vscode.CodeLensProvider {
   private readonly disposables: vscode.Disposable[] = [];
@@ -35,6 +36,7 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
       vscode.commands.registerCommand('latexReview.nextChange', (target?: ReviewTarget) => this.navigate(1, target)),
       vscode.commands.registerCommand('latexReview.previousChange', (target?: ReviewTarget) => this.navigate(-1, target)),
       vscode.commands.registerCommand('latexReview.locateCurrent', (target?: ReviewTarget) => this.locate(target)),
+      vscode.commands.registerCommand('latexReview.locateParseIssue', (target: ParseIssueTarget) => this.locateParseIssue(target)),
       vscode.commands.registerCommand('latexReview.refresh', () => { this.snapshots.clear(); this.refresh(); }),
       vscode.commands.registerCommand('latexReview.toggleReview', () => this.toggle()),
       vscode.commands.registerCommand('latexReview.selectLanguage', () => this.selectLanguage()),
@@ -139,7 +141,8 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
         if (!this.supported(document)) continue;
         const result = this.snapshot(document);
         this.diagnostics.set(document.uri, result.issues.map(issue => {
-          const diagnostic = new vscode.Diagnostic(this.range(document, issue), t('parseError'), vscode.DiagnosticSeverity.Warning);
+          const diagnostic = new vscode.Diagnostic(this.range(document, issue),
+            `${t('parseError')} ${t('parseStopped', document.positionAt(issue.start).line + 1)}`, vscode.DiagnosticSeverity.Warning);
           diagnostic.source = 'LaTeX Review'; diagnostic.code = issue.message;
           return diagnostic;
         }));
@@ -175,7 +178,23 @@ export class ReviewController implements vscode.Disposable, vscode.CodeLensProvi
       current, target: current && editor ? this.target(editor.document, current) : undefined,
       previous: previous && editor ? this.target(editor.document, previous) : undefined,
       next: next && editor ? this.target(editor.document, next) : undefined,
-      index: current ? changes.indexOf(current) + 1 : 0, count: changes.length, issues: result?.issues.length ?? 0, comments: result?.comments.length ?? 0 });
+      index: current ? changes.indexOf(current) + 1 : 0, count: changes.length, issues: result?.issues.length ?? 0, comments: result?.comments.length ?? 0,
+      parseIssue: !pending && editor && result?.issues.length ? {
+        line: editor.document.positionAt(result.issues[0].start).line + 1,
+        target: { uri: editor.document.uri.toString(), version: editor.document.version, start: result.issues[0].start }
+      } : undefined });
+  }
+
+  private async locateParseIssue(target: ParseIssueTarget): Promise<void> {
+    if (!this.enabled || this.busy || !target) return;
+    const editor = vscode.window.visibleTextEditors.find(item => item.document.uri.toString() === target.uri);
+    if (!editor || editor.document.version !== target.version ||
+      !this.snapshot(editor.document).issues.some(issue => issue.start === target.start)) { this.refresh(); return; }
+    const active = await vscode.window.showTextDocument(editor.document, { viewColumn: editor.viewColumn, preserveFocus: false });
+    if (active.document.version !== target.version) { this.refresh(); return; }
+    const position = active.document.positionAt(target.start);
+    active.selection = new vscode.Selection(position, position);
+    active.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
   }
 
   private async toggle(): Promise<void> {

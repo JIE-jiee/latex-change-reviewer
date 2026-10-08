@@ -220,7 +220,9 @@ npm.cmd run package:marketplace -- --publisher Unfinished-draft
 
 记录模式按条件转交普通输入、删除、粘贴及剪切命令，使修订包装和正文进入同一撤销步骤。IME 组合期间保持原生处理，明确结束后转换；500 ms 调度不用于判定输入法是否完成。无法识别的外部修改保留原文结果并暂停。未闭合公式、注释或定义中的伪正文起点不会被当作安全的正文范围。
 
-解析支持 CRLF、参数间注释、转义百分号与花括号、标准可选参数；忽略 \verb、\verb*、verbatim、verbatim*、lstlisting、minted 和常见 \newcommand、\renewcommand、\providecommand、\DeclareRobustCommand 定义。不展开 \def、xparse、自定义宏、复杂条件或字符类别变化。
+解析支持 CRLF、参数间注释、转义百分号与花括号、标准可选参数；忽略 \verb、\verb*、verbatim、verbatim*、lstlisting、minted，常见 \newcommand、\renewcommand、\providecommand、\DeclareRobustCommand 和 \def、\gdef、\edef、\xdef 定义，以及 \pdfstringdefDisableCommands 配置块。不展开宏，也不执行复杂条件或字符类别变化。
+
+遇到残缺结构时，状态栏显示“未扫描完”及问题行号，点击可定位。此时计数只代表已识别的修订，不能据此判断文稿已经没有修订。
 
 0.3.0 已通过 38 项自动测试，以及 VS Code 1.85.2 与 1.139.1 的源码和安装包集成测试。隔离窗口中已实际验证中日文输入法、修订记录、批注保存与撤销。尚未验证使用者真实文稿中的特殊宏工作流。
 

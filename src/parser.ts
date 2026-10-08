@@ -10,6 +10,7 @@ const REVIEW: Record<string, Spec> = {
 };
 const VERBATIM_ENVS = new Set(['verbatim', 'verbatim*', 'lstlisting', 'minted']);
 const DEFINITIONS = new Set(['newcommand', 'renewcommand', 'providecommand', 'DeclareRobustCommand']);
+const PRIMITIVE_DEFINITIONS = new Set(['def', 'gdef', 'edef', 'xdef']);
 
 function escaped(text: string, at: number): boolean {
     let n = 0;
@@ -174,6 +175,47 @@ function skipDefinition(text: string, commandEnd: number, limit: number): number
     return body ? body.close + 1 : undefined;
 }
 
+/**
+ * Skip a TeX primitive definition. Unlike \newcommand, the parameter text is
+ * an arbitrary token sequence (for example #1#2prefix), so it must not be
+ * parsed as an optional argument or scanned for review commands.
+ */
+function skipPrimitiveDefinition(text: string, commandEnd: number, limit: number): number | undefined {
+    let i = skipTrivia(text, commandEnd, limit);
+    const target = commandAt(text, i, limit);
+    if (!target || !target.name) return undefined;
+    i = target.end;
+
+    // TeX reads parameter text up to the opening replacement-text brace.
+    // Skip comments and control tokens atomically so escaped braces and
+    // control-symbol macro names cannot be mistaken for that brace.
+    while (i < limit) {
+        if (text[i] === '%' && !escaped(text, i)) {
+            i = skipComment(text, i, limit);
+            continue;
+        }
+        const token = commandAt(text, i, limit);
+        if (token) {
+            i = token.end;
+            continue;
+        }
+        if (text[i] === '{' && !escaped(text, i)) {
+            const body = parseDelimited(text, i, '{', '}', limit);
+            return body ? body.close + 1 : undefined;
+        }
+        if (text[i] === '}' && !escaped(text, i)) return undefined;
+        i++;
+    }
+    return undefined;
+}
+
+function skipPdfStringDefinitions(text: string, commandEnd: number, limit: number): number | undefined {
+    const openAt = skipTrivia(text, commandEnd, limit);
+    if (text[openAt] !== '{') return undefined;
+    const block = parseDelimited(text, openAt, '{', '}', limit);
+    return block ? block.close + 1 : undefined;
+}
+
 function parseOne(text: string, start: number, commandEnd: number, spec: Spec, issues: ParseIssue[], limit: number, context: ScanContext):
     { change: LatexChange; next: number } | undefined {
     let i = skipTrivia(text, commandEnd, limit);
@@ -263,6 +305,24 @@ function scanRange(text: string, from: number, to: number, issues: ParseIssue[],
             const end = skipDefinition(text, command.end, to);
             if (end === undefined) {
                 issues.push({ start: i, end: to, message: 'Unable to determine the end of a command definition; parsing stopped in this region.' });
+                break;
+            }
+            i = end;
+            continue;
+        }
+        if (PRIMITIVE_DEFINITIONS.has(command.name)) {
+            const end = skipPrimitiveDefinition(text, command.end, to);
+            if (end === undefined) {
+                issues.push({ start: i, end: to, message: 'Unable to determine the end of a TeX primitive definition; parsing stopped in this region.' });
+                break;
+            }
+            i = end;
+            continue;
+        }
+        if (command.name === 'pdfstringdefDisableCommands') {
+            const end = skipPdfStringDefinitions(text, command.end, to);
+            if (end === undefined) {
+                issues.push({ start: i, end: to, message: 'Unable to determine the end of the pdfstring command block; parsing stopped in this region.' });
                 break;
             }
             i = end;

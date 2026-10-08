@@ -107,6 +107,86 @@ test('common command definitions are skipped', () => {
     assert.equal(replacementText(source, result.changes[0], 'accept'), 'real');
 });
 
+test('TeX primitive definitions skip parameter declarations and replacement bodies', () => {
+    const source = String.raw`\def\a#1#2{\added{fake}}
+\gdef\b#1,#2;{\deleted{fake}}
+\edef\c#1\added{#1}
+\xdef\d#1{nested {groups} and \replaced{fake}{fake}}
+\added{real}`;
+    const result = parseChanges(source);
+    assert.equal(result.issues.length, 0, result.issues.map(x => x.message).join('; '));
+    assert.equal(result.changes.length, 1);
+    assert.equal(replacementText(source, result.changes[0], 'accept'), 'real');
+});
+
+test('a definition of added itself does not hide the following real addition', () => {
+    for (const name of ['def', 'gdef', 'edef', 'xdef']) {
+        const source = `\\${name}\\added#1{#1}\r\n\\added{正文新增}`;
+        const result = parseChanges(source);
+        assert.equal(result.issues.length, 0);
+        assert.equal(result.changes.length, 1);
+        assert.equal(replacementText(source, result.changes[0], 'accept'), '正文新增');
+    }
+});
+
+test('primitive definition scanner accepts comments, escaped braces, and control-symbol names', () => {
+    const source = String.raw`\def\!#1\{delim\}% header comment with \added{fake}
+  {body {nested} \deleted{fake}}
+\added{real}`;
+    const result = parseChanges(source);
+    assert.equal(result.issues.length, 0, result.issues.map(x => x.message).join('; '));
+    assert.equal(result.changes.length, 1);
+    assert.equal(replacementText(source, result.changes[0], 'accept'), 'real');
+});
+
+test('pdfstring command configuration is skipped as one balanced block', () => {
+    const source = String.raw`\pdfstringdefDisableCommands{%
+  \def\added#1{#1}%
+  \def\deleted#1{}%
+  \def\replaced#1#2{#1}%
+  \def\comment#1{}%
+}
+\added{正文新增}`;
+    const result = parseChanges(source);
+    assert.equal(result.issues.length, 0, result.issues.map(x => x.message).join('; '));
+    assert.equal(result.changes.length, 1);
+    assert.equal(replacementText(source, result.changes[0], 'accept'), '正文新增');
+});
+
+test('primitive definitions inside a revision are skipped while real nested revisions remain visible', () => {
+    const source = String.raw`\replaced{\def\local#1{\added{definition only}} text \added{real child}}{old}`;
+    const result = parseChanges(source);
+    assert.equal(result.issues.length, 0, result.issues.map(x => x.message).join('; '));
+    assert.equal(result.changes.length, 1);
+    assert.equal(result.changes[0].children.length, 1);
+    assert.equal(result.changes[0].children[0].type, 'added');
+    assert.equal(replacementText(source, result.changes[0], 'accept'), String.raw`\def\local#1{\added{definition only}} text \added{real child}`);
+});
+
+test('PDF configuration excludes revision and comment uses as well as definitions', () => {
+    const source = String.raw`\pdfstringdefDisableCommands{\added{configuration only} {\comment{not a document comment}}}
+\added{real} \comment{real comment}`;
+    const result = parseChanges(source);
+    assert.equal(result.issues.length, 0);
+    assert.equal(result.changes.length, 1);
+    assert.equal(result.comments.length, 1);
+    assert.equal(replacementText(source, result.changes[0], 'accept'), 'real');
+});
+
+test('incomplete primitive definitions and pdfstring blocks report an issue and stop scanning', () => {
+    for (const source of [
+        String.raw`\added{before} \def\broken#1#2`,
+        String.raw`\added{before} \def\broken#1} \added{later}`,
+        String.raw`\added{before} \def\broken#1{\added{inside}`,
+        String.raw`\added{before} \pdfstringdefDisableCommands{\def\added#1{#1}`,
+    ]) {
+        const result = parseChanges(source);
+        assert.equal(result.changes.length, 1);
+        assert.equal(result.issues.length, 1);
+        assert.match(result.issues[0].message, /definition|pdfstring/);
+    }
+});
+
 test('unclosed arguments produce diagnostics and stop uncertain scanning', () => {
     const source = String.raw`\replaced{old}{unfinished \added{x}`;
     const result = parseChanges(source);

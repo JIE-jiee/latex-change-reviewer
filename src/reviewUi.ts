@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { LatexChange } from './changeTypes';
-import type { ReviewTarget } from './reviewController';
+import type { ReviewTarget, ParseIssueTarget } from './reviewController';
 import { t } from './i18n';
 import { f } from './featureStrings';
 
@@ -24,6 +24,7 @@ interface ReviewViewState {
   count: number;
   issues: number;
   comments: number;
+  parseIssue?: { line: number; target: ParseIssueTarget };
 }
 
 function gutterArrow(fill: string): vscode.Uri {
@@ -97,11 +98,16 @@ export class ReviewUi implements vscode.Disposable {
     }
     if (state.current) this.button('current', `$(target) ${t('currentInfo', t(state.current.type), state.index, state.count)}`,
       `${state.editor?.document.fileName}\n${t('locateCurrent')}`, state.busy ? undefined : locate);
-    const countText = state.pending ? t('waiting') : state.issues ? t('errors', state.count, state.issues)
+    const countText = state.pending ? t('waiting') : state.parseIssue ? t('partial', state.count, state.parseIssue.line)
+      : state.issues ? t('errors', state.count, state.issues)
       : state.count || state.comments ? t('remaining', state.count) : t('clean');
     const commentText = state.comments ? ` · $(comment) ${f('commentCount', state.comments)}` : '';
-    this.button('remaining', `$(list-unordered) ${countText}${commentText}`, t('locateCurrent'),
-      !state.busy && state.count ? locate : undefined);
+    const issueCommand: vscode.Command | undefined = state.parseIssue ? {
+      title: t('parseStopped', state.parseIssue.line), command: 'latexReview.locateParseIssue', arguments: [state.parseIssue.target]
+    } : undefined;
+    this.button('remaining', `${state.issues ? '$(warning)' : '$(list-unordered)'} ${countText}${commentText}`,
+      state.parseIssue ? `${t('parseStopped', state.parseIssue.line)}\n${t('errors', state.count, state.issues)}` : t('locateCurrent'),
+      !state.busy && !state.pending ? issueCommand ?? (state.count ? locate : undefined) : undefined);
   }
 
   private decorate(state: ReviewViewState): void {

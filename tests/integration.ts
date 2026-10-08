@@ -134,6 +134,41 @@ async function runBehaviorTests(): Promise<void> {
   await vscode.commands.executeCommand(acceptCommand);
   assert.equal(editor.document.getText(), String.raw`\added{\replaced{new}}`);
 
+  // Hyperref's PDF bookmark definitions must not hide the body revision list.
+  const pdfDefinitions = String.raw`\pdfstringdefDisableCommands{%
+  \def\added#1{#1}%
+  \def\deleted#1{}%
+  \def\replaced#1#2{#1}%
+  \def\comment#1{}%
+}
+`;
+  const bodyRevisions = Array.from({ length: 74 }, (_, index) => `\\added{正文 ${index + 1}}`).join('\n');
+  const pdfSource = pdfDefinitions + bodyRevisions;
+  editor = await openLatex(pdfSource);
+  await vscode.commands.executeCommand('latexReview.refresh');
+  const pdfLenses = actionableLenses(await codeLenses(editor.document));
+  assert.equal(pdfLenses.length, 148, 'All 74 real body revisions remain actionable.');
+  assert.equal(vscode.languages.getDiagnostics(editor.document.uri).length, 0);
+  await vscode.commands.executeCommand(pdfLenses[0].command!.command, ...(pdfLenses[0].command!.arguments ?? []));
+  assert.equal(editor.document.getText(), pdfSource.replace('\\added{正文 1}', '正文 1'));
+  await vscode.commands.executeCommand('undo');
+  assert.equal(editor.document.getText(), pdfSource, 'Undo restores the revision without touching definitions.');
+
+  // Stopped scans explicitly identify the line; their locator is version-bound.
+  editor = await openLatex('first line\n\n\\replaced{new}\n\\added{not scanned}');
+  await vscode.commands.executeCommand('latexReview.refresh');
+  const stopDiagnostic = vscode.languages.getDiagnostics(editor.document.uri)[0];
+  assert.ok(stopDiagnostic);
+  assert.match(stopDiagnostic.message, /line 3.*not scanned/);
+  assert.equal(actionableLenses(await codeLenses(editor.document)).length, 0);
+  const issueTarget = { uri: editor.document.uri.toString(), version: editor.document.version, start: editor.document.offsetAt(stopDiagnostic.range.start) };
+  await vscode.commands.executeCommand('latexReview.locateParseIssue', issueTarget);
+  assert.equal(editor.selection.active.line, 2);
+  await editor.edit(builder => builder.insert(new vscode.Position(0, 0), 'prefix'));
+  editor.selection = new vscode.Selection(0, 0, 0, 0);
+  await vscode.commands.executeCommand('latexReview.locateParseIssue', issueTarget);
+  assert.equal(editor.selection.active.line, 0, 'An outdated locator must not use its old position.');
+
   // A file switch does not redirect a captured CodeLens to the wrong buffer.
   const boundEditor = await openLatex(String.raw`\added{bound}`);
   const boundLens = actionableLenses(await codeLenses(boundEditor.document))[0];
